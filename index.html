@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotecraft 2 — Tree Service Estimating & Quote Management</title>
+<style>
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --surface-2: #f8faf9;
+  --surface-3: #eef3f0;
+  --ink: #16241d;
+  --ink-2: #46554d;
+  --muted: #748078;
+  --line: #dce4df;
+  --line-strong: #c8d4cc;
+  --brand: #176b45;
+  --brand-dark: #0e4d31;
+  --brand-soft: #e1f2e9;
+  --accent: #d99b35;
+  --accent-soft: #fff3d9;
+  --danger: #b43b3b;
+  --danger-soft: #fdeaea;
+  --warning: #9a6619;
+  --warning-soft: #fff5df;
+  --info: #356b91;
+  --info-soft: #e7f1f8;
+  --success: #23794d;
+  --success-soft: #e5f5ec;
+  --shadow: 0 8px 28px rgba(28, 57, 41, .08);
+  --shadow-sm: 0 2px 8px rgba(28, 57, 41, .06);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --sidebar: 248px;
+  --header: 70px;
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.5;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+a { color: var(--brand); }
+h1, h2, h3, h4, p { margin-top: 0; }
+h1 { font-size: 26px; letter-spacing: -.5px; margin-bottom: 5px; }
+h2 { font-size: 19px; letter-spacing: -.25px; margin-bottom: 14px; }
+h3 { font-size: 15px; margin-bottom: 10px; }
+small { font-size: 12px; }
+.muted { color: var(--muted); }
+.hidden { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.app-shell { min-height: 100vh; }
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar);
+  background: #10291e;
+  color: #eaf3ed;
+  padding: 21px 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px 22px;
+}
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #41b878, #197448);
+  display: grid;
+  place-items: center;
+  color: white;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+  flex: 0 0 auto;
+}
+.brand-name { font-size: 17px; font-weight: 760; line-height: 1.2; }
+.brand-sub { font-size: 10px; color: #9cb9a8; letter-spacing: 1.2px; text-transform: uppercase; }
+.nav-label {
+  color: #789987;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  padding: 12px 12px 7px;
+}
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  background: transparent;
+  color: #c5d8cc;
+  border-radius: 9px;
+  padding: 10px 12px;
+  margin: 2px 0;
+  text-align: left;
+  font-weight: 560;
+  transition: background .15s, color .15s;
+}
+.nav-item:hover { background: rgba(255,255,255,.07); color: white; }
+.nav-item.active { background: #22543a; color: white; }
+.nav-item svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.nav-count {
+  margin-left: auto;
+  font-size: 11px;
+  background: rgba(255,255,255,.11);
+  border-radius: 99px;
+  padding: 1px 7px;
+}
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding: 15px 9px 0;
+}
+.company-switcher {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 10px;
+  padding: 10px;
+}
+.company-switcher strong { display: block; font-size: 13px; }
+.company-switcher span { color: #9cb9a8; font-size: 11px; }
+.main {
+  margin-left: var(--sidebar);
+  min-height: 100vh;
+}
+.topbar {
+  height: var(--header);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255,255,255,.94);
+  border-bottom: 1px solid var(--line);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+}
+.topbar-left { display: flex; align-items: center; gap: 15px; }
+.menu-toggle { display: none; }
+.page-context { font-size: 13px; color: var(--muted); }
+.page-context strong { color: var(--ink); display: block; font-size: 14px; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.icon-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  color: var(--ink-2);
+}
+.icon-button:hover { background: var(--surface-3); }
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+  display: grid;
+  place-items: center;
+  font-weight: 750;
+  font-size: 12px;
+}
+.content { padding: 27px 28px 50px; max-width: 1540px; margin: 0 auto; }
+.page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.page-heading p { margin: 0; color: var(--muted); }
+.heading-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+.btn {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  transition: background .15s, border .15s, transform .1s;
+}
+.btn:hover { background: var(--surface-3); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { color: white; background: var(--brand); border-color: var(--brand); }
+.btn-primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+.btn-danger { color: var(--danger); background: var(--danger-soft); border-color: #efc8c8; }
+.btn-danger:hover { background: #f9dada; }
+.btn-ghost { border-color: transparent; background: transparent; }
+.btn-ghost:hover { background: var(--surface-3); }
+.btn-sm { padding: 5px 9px; min-height: 30px; font-size: 12px; border-radius: 7px; }
+.btn-icon { width: 34px; padding: 0; }
+.btn svg { width: 16px; height: 16px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  padding: 17px 19px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-header h2, .card-header h3 { margin: 0; }
+.card-body { padding: 19px; }
+.card-footer { padding: 14px 19px; border-top: 1px solid var(--line); background: var(--surface-2); }
+.grid { display: grid; gap: 17px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.stat-card { padding: 17px 18px; display: flex; gap: 13px; align-items: center; }
+.stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--brand-soft);
+  color: var(--brand);
+  flex: 0 0 auto;
+}
+.stat-icon.blue { background: var(--info-soft); color: var(--info); }
+.stat-icon.gold { background: var(--accent-soft); color: var(--warning); }
+.stat-icon.red { background: var(--danger-soft); color: var(--danger); }
+.stat-icon svg { width: 21px; height: 21px; }
+.stat-value { font-size: 24px; font-weight: 750; line-height: 1.15; letter-spacing: -.6px; }
+.stat-label { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.stat-trend { font-size: 11px; margin-top: 4px; color: var(--success); }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.form-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field { min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field label, .field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 680;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+.required::after { content: " *"; color: var(--danger); }
+.input, .select, .textarea {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 9px 10px;
+  min-height: 39px;
+  outline: none;
+  transition: border .15s, box-shadow .15s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(23,107,69,.11);
+}
+.input.invalid, .select.invalid, .textarea.invalid { border-color: var(--danger); }
+.textarea { resize: vertical; min-height: 92px; }
+.input-group { display: flex; }
+.input-group .input { border-radius: 8px 0 0 8px; }
+.input-group .btn { border-radius: 0 8px 8px 0; margin-left: -1px; min-height: 39px; }
+.field-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.field-error { color: var(--danger); font-size: 11px; margin-top: 5px; display: none; }
+.field-error.show { display: block; }
+.checkbox { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; }
+.checkbox input { margin-top: 3px; accent-color: var(--brand); }
+.radio-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.radio-card { position: relative; }
+.radio-card input { position: absolute; opacity: 0; pointer-events: none; }
+.radio-card span {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 620;
+  cursor: pointer;
+  text-align: center;
+}
+.radio-card input:checked + span { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 99px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 680;
+  white-space: nowrap;
+}
+.badge-green { background: var(--success-soft); color: var(--success); }
+.badge-blue { background: var(--info-soft); color: var(--info); }
+.badge-gold { background: var(--warning-soft); color: var(--warning); }
+.badge-red { background: var(--danger-soft); color: var(--danger); }
+.badge-gray { background: var(--surface-3); color: var(--ink-2); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left;
+  padding: 10px 15px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  font-weight: 750;
+  white-space: nowrap;
+}
+td { padding: 13px 15px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #fcfdfc; }
+.table-primary { font-weight: 680; }
+.table-secondary { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.search-wrap { position: relative; flex: 1; min-width: 210px; max-width: 430px; }
+.search-wrap svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  color: var(--muted);
+}
+.search-wrap .input { padding-left: 33px; }
+.toolbar-spacer { flex: 1; }
+.empty-state {
+  padding: 52px 25px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+  background: var(--surface-3);
+  color: var(--brand);
+}
+.empty-icon svg { width: 26px; height: 26px; }
+.empty-state h3 { color: var(--ink); margin-bottom: 6px; }
+.empty-state p { max-width: 440px; margin: 0 auto 16px; }
+.segmented { display: inline-flex; background: var(--surface-3); border-radius: 9px; padding: 3px; gap: 2px; }
+.segmented button {
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-size: 12px;
+  color: var(--ink-2);
+  font-weight: 650;
+}
+.segmented button.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+.progress { height: 6px; background: var(--surface-3); border-radius: 99px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--brand); border-radius: inherit; transition: width .25s; }
+.builder-layout { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 18px; align-items: start; }
+.builder-main { min-width: 0; }
+.steps { display: flex; gap: 0; margin-bottom: 18px; overflow-x: auto; }
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 150px;
+}
+.step:first-child { border-radius: 10px 0 0 10px; }
+.step:last-child { border-radius: 0 10px 10px 0; }
+.step + .step { border-left: 0; }
+.step-number {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-3);
+  font-size: 11px;
+  font-weight: 750;
+}
+.step.active { color: var(--brand-dark); background: var(--brand-soft); border-color: #b8ddc8; }
+.step.active .step-number { background: var(--brand); color: white; }
+.step.complete .step-number { background: var(--success-soft); color: var(--success); }
+.builder-section { display: none; }
+.builder-section.active { display: block; }
+.form-section { margin-bottom: 17px; }
+.form-section h3 { display: flex; align-items: center; gap: 8px; }
+.form-section h3 svg { width: 17px; color: var(--brand); }
+.section-note { background: var(--info-soft); color: #305d7c; border-radius: 8px; padding: 10px 12px; font-size: 12px; margin-bottom: 15px; }
+.summary-panel { position: sticky; top: calc(var(--header) + 18px); }
+.summary-customer { padding: 16px; border-bottom: 1px solid var(--line); }
+.summary-customer strong { display: block; }
+.summary-customer span { color: var(--muted); font-size: 12px; }
+.line-items { padding: 7px 16px; max-height: 270px; overflow-y: auto; }
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 12px;
+}
+.summary-line:last-child { border: 0; }
+.summary-line span:first-child { color: var(--ink-2); }
+.summary-line span:last-child { white-space: nowrap; font-weight: 650; }
+.summary-totals { padding: 14px 16px; background: var(--surface-2); border-top: 1px solid var(--line); }
+.total-row { display: flex; justify-content: space-between; padding: 4px 0; color: var(--ink-2); font-size: 12px; }
+.total-row.grand { font-size: 17px; font-weight: 780; color: var(--ink); padding-top: 11px; margin-top: 7px; border-top: 1px solid var(--line-strong); }
+.total-row .muted { color: var(--muted); }
+.price-lock {
+  margin: 12px 16px 16px;
+  border: 1px solid #efd7a8;
+  background: var(--accent-soft);
+  border-radius: 9px;
+  padding: 10px;
+  font-size: 11px;
+  color: #79521a;
+}
+.price-lock button { border: 0; background: transparent; color: #714810; font-weight: 750; padding: 0; text-decoration: underline; }
+.template-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
+.template-card { overflow: hidden; transition: transform .15s, box-shadow .15s; }
+.template-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.template-visual {
+  height: 92px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #dcece2, #f4f7f3);
+  display: grid;
+  place-items: center;
+}
+.template-visual svg { width: 54px; height: 54px; color: var(--brand); opacity: .78; }
+.template-visual .version {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,255,255,.9);
+  border-radius: 99px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.template-content { padding: 16px; }
+.template-content h3 { margin-bottom: 4px; }
+.template-content p { color: var(--muted); font-size: 12px; min-height: 37px; margin-bottom: 12px; }
+.template-meta { display: flex; justify-content: space-between; color: var(--ink-2); font-size: 11px; margin-bottom: 14px; }
+.template-actions { display: flex; gap: 7px; }
+.template-actions .btn { flex: 1; }
+.price-book-table td:first-child { font-weight: 650; }
+.price-book-table .edit-price { width: 90px; }
+.price-book-table input { padding: 6px 8px; min-height: 32px; text-align: right; }
+.rate-category { background: var(--surface-3) !important; font-size: 11px !important; text-transform: uppercase; letter-spacing: .7px; color: var(--ink-2) !important; }
+.activity { position: relative; padding-left: 22px; }
+.activity::before { content: ""; position: absolute; left: 6px; top: 7px; bottom: 7px; width: 1px; background: var(--line); }
+.activity-item { position: relative; padding-bottom: 19px; }
+.activity-item:last-child { padding-bottom: 0; }
+.activity-dot { position: absolute; left: -21px; top: 4px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); border: 3px solid var(--brand); }
+.activity-item strong { font-size: 12px; }
+.activity-item time { color: var(--muted); font-size: 11px; }
+.activity-item p { color: var(--ink-2); font-size: 12px; margin: 4px 0 0; }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,25,17,.48);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  width: min(650px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.modal.small { width: min(430px, 100%); }
+.modal.large { width: min(920px, 100%); }
+.modal-header { padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.modal-header h2 { margin: 0; }
+.modal-header p { color: var(--muted); margin: 3px 0 0; font-size: 12px; }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; background: var(--surface-2); }
+.close-button { border: 0; background: transparent; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: var(--muted); }
+.close-button:hover { background: var(--surface-3); }
+.toast-region { position: fixed; right: 20px; bottom: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
+.toast {
+  background: #172a20;
+  color: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 9px 28px rgba(0,0,0,.18);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  animation: toast-in .2s ease-out;
+}
+.toast.success { border-left: 4px solid #5ac58d; }
+.toast.error { border-left: 4px solid #ef7777; }
+.toast.info { border-left: 4px solid #70a9d1; }
+.toast svg { width: 17px; flex: 0 0 auto; margin-top: 1px; }
+.toast button { margin-left: auto; background: transparent; border: 0; color: #a9bbb0; padding: 0; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.quote-paper {
+  background: white;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  box-shadow: 0 4px 22px rgba(30,50,38,.12);
+  border: 1px solid var(--line);
+  min-height: 1000px;
+  padding: 46px;
+}
+.paper-head { display: flex; justify-content: space-between; gap: 25px; padding-bottom: 24px; border-bottom: 3px solid var(--brand); }
+.paper-logo { display: flex; align-items: center; gap: 10px; }
+.paper-logo .brand-mark { width: 42px; height: 42px; }
+.paper-logo h2 { margin: 0; font-size: 20px; }
+.paper-logo p { margin: 1px 0 0; color: var(--muted); font-size: 11px; }
+.quote-number { text-align: right; font-size: 12px; }
+.quote-number strong { display: block; font-size: 18px; }
+.paper-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; padding: 22px 0; }
+.paper-parties h4 { text-transform: uppercase; letter-spacing: 1px; font-size: 10px; color: var(--muted); margin-bottom: 7px; }
+.paper-parties p { margin: 0; font-size: 13px; }
+.paper-section { margin-top: 25px; }
+.paper-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .8px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.paper-totals { margin-left: auto; width: 310px; margin-top: 14px; }
+.acceptance-box { border: 1px solid var(--line-strong); border-radius: 8px; padding: 17px; margin-top: 26px; font-size: 12px; }
+.acceptance-box h3 { border: 0; padding: 0; margin-bottom: 9px; }
+.signature-line { border-top: 1px solid var(--ink); width: 220px; margin-top: 32px; padding-top: 4px; color: var(--muted); font-size: 10px; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+.compare-list { list-style: none; padding: 0; margin: 0; }
+.compare-list li { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.compare-list li:last-child { border: 0; }
+.compare-list strong { display: block; font-size: 12px; }
+.compare-list span { color: var(--muted); font-size: 11px; }
+.rate-highlight { background: var(--accent-soft); padding: 1px 4px; border-radius: 4px; }
+.diff-added { background: var(--success-soft); }
+.diff-removed { background: var(--danger-soft); text-decoration: line-through; }
+.panel-tabs { display: flex; border-bottom: 1px solid var(--line); padding: 0 18px; gap: 20px; overflow-x: auto; }
+.panel-tab { border: 0; background: transparent; padding: 13px 0 11px; color: var(--muted); font-weight: 650; font-size: 12px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.panel-tab.active { color: var(--brand); border-color: var(--brand); }
+.team-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 15px; }
+.team-card { padding: 18px; text-align: center; }
+.team-avatar { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; font-weight: 750; background: var(--brand-soft); color: var(--brand-dark); }
+.team-card h3 { margin-bottom: 2px; }
+.team-card p { color: var(--muted); font-size: 11px; margin-bottom: 9px; }
+.team-card .badge { margin-bottom: 13px; }
+.loading { display: inline-block; width: 15px; height: 15px; border: 2px solid var(--line); border-top-color: var(--brand); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.notice {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 11px 13px;
+  border-radius: 9px;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+.notice.info { background: var(--info-soft); color: #315c7c; }
+.notice.warning { background: var(--warning-soft); color: #805516; }
+.notice.success { background: var(--success-soft); color: var(--success); }
+.notice.danger { background: var(--danger-soft); color: var(--danger); }
+.notice svg { width: 17px; flex: 0 0 auto; }
+kbd { border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; font-size: 11px; background: var(--surface-2); }
+.pill-list { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 15px; }
+.pill {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  border-radius: 99px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 650;
+}
+.pill.active { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+.mobile-overlay { display: none; }
+@media (max-width: 1180px) {
+  .template-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .team-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .builder-layout { grid-template-columns: minmax(0, 1fr) 310px; }
+}
+@media (max-width: 940px) {
+  :root { --sidebar: 220px; }
+  .builder-layout { grid-template-columns: 1fr; }
+  .summary-panel { position: static; }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .form-grid.three { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  .sidebar { transform: translateX(-100%); transition: transform .2s; width: 248px; }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open .mobile-overlay { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(0,0,0,.4); }
+  .main { margin-left: 0; }
+  .menu-toggle { display: grid; }
+  .topbar { padding: 0 15px; }
+  .page-context span { display: none; }
+  .content { padding: 20px 15px 40px; }
+  .page-heading { flex-direction: column; }
+  .grid-2, .grid-3, .grid-4, .form-grid, .form-grid.three, .template-grid, .team-grid, .compare-grid { grid-template-columns: 1fr; }
+  .radio-cards { grid-template-columns: 1fr; }
+  .quote-paper { padding: 25px; min-height: auto; }
+  .paper-parties { grid-template-columns: 1fr; }
+  .paper-totals { width: 100%; }
+  .topbar-actions .btn { display: none; }
+  .toolbar { align-items: stretch; }
+  .toolbar .select { min-width: 130px; }
+}
+@media print {
+  body { background: white; }
+  .sidebar, .topbar, .page-heading, .no-print { display: none !important; }
+  .main { margin: 0; }
+  .content { padding: 0; }
+  .quote-paper { border: 0; box-shadow: none; max-width: none; padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22V9M12 14l-5-4M12 11l5-5M7 10a4 4 0 1 1 0-8 4 4 0 0 1 0 8ZM17 6a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"/></svg>
+      </div>
+      <div><div class="brand-name">Quotecraft 2</div><div class="brand-sub">Tree service quotes</div></div>
+    </div>
+    <div class="nav-label">Workspace</div>
+    <button class="nav-item active" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" data-view="quotes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg>
+      Quotes <span class="nav-count" id="quoteCountNav">0</span>
+    </button>
+    <button class="nav-item" data-view="builder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+      Quote builder
+    </button>
+    <button class="nav-item" data-view="templates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      Templates <span class="nav-count" id="templateCountNav">0</span>
+    </button>
+    <div class="nav-label">Operations</div>
+    <button class="nav-item" data-view="pricebook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 6v12"/></svg>
+      Price book
+    </button>
+    <button class="nav-item" data-view="team">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 15a6 6 0 0 1 5 6"/></svg>
+      Team & activity
+    </button>
+    <div class="sidebar-footer">
+      <div class="company-switcher">
+        <strong id="companyName">Oak & Pine Tree Care</strong>
+        <span>Professional plan · 5 seats</span>
+      </div>
+    </div>
+  </aside>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button menu-toggle" id="menuToggle" aria-label="Open navigation">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="page-context"><span>Oak & Pine Tree Care</span><strong id="pageTitle">Dashboard</strong></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" data-action="new-quote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          New quote
+        </button>
+        <button class="icon-button" id="notificationButton" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+        </button>
+        <div class="avatar" title="Alex Morgan · Owner">AM</div>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <section id="view-dashboard" class="view-panel"></section>
+      <section id="view-quotes" class="view-panel hidden"></section>
+      <section id="view-builder" class="view-panel hidden"></section>
+      <section id="view-templates" class="view-panel hidden"></section>
+      <section id="view-pricebook" class="view-panel hidden"></section>
+      <section id="view-team" class="view-panel hidden"></section>
+    </div>
+  </main>
+</div>
+<div class="toast-region" id="toastRegion" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "quotecraft2_state_v1";
+const APP_VERSION = "2.0.0";
+
+const icons = {
+  tree: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22V8M12 15l-5-4M12 12l5-5M7 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8ZM17 7a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"/></svg>',
+  dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 6v12"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2 21h20zM12 9v5M12 17v1"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 16-1 5 5-1L19 9l-4-4zM13 7l4 4"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 15a6 6 0 0 1 5 6"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 3 19 9-19 9 4-9zM7 12h15"/></svg>',
+  print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h4l2-3h4l2 3h4v13H4z"/><circle cx="12" cy="13" r="4"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v1"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m13 2-8 12h7l-1 8 8-12h-7z"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+};
+
+function uid(prefix = "id") {
+  return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+}
+
+function nowISO() {
+  return new Date().toISOString();
+}
+
+function money(value) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value || 0));
+}
+
+function number(value, decimals = 1) {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: decimals }).format(Number(value || 0));
+}
+
+function date(value, options = {}) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-US", options.length ? options : { month: "short", day: "numeric", year: "numeric" }).format(d);
+}
+
+function dateTime(value) {
+  return date(value, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
+function daysFromNow(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString();
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function normalize(value) {
+  return String(value || "").toLowerCase().trim();
+}
+
+function seedState() {
+  return {
+    appVersion: APP_VERSION,
+    company: {
+      name: "Oak & Pine Tree Care",
+      email: "quotes@oakandpine.co",
+      phone: "(555) 014-2837",
+      address: "1842 Cedar Grove Road, Springfield, IL 62704",
+      license: "IL ISA-AR-009184",
+      taxRate: 6.25,
+      depositPercent: 30,
+      defaultMargin: 32,
+      quotePrefix: "Q2"
+    },
+    currentUser: { id: "user_alex", name: "Alex Morgan", role: "Owner", initials: "AM" },
+    priceBook: {
+      labor: [
+        { id: "rate_labor1", name: "General arborist labor", unit: "hour", rate: 78, category: "Labor", active: true },
+        { id: "rate_labor2", name: "Certified arborist", unit: "hour", rate: 115, category: "Labor", active: true },
+        { id: "rate_labor3", name: "Crew labor — 2 person", unit: "hour", rate: 142, category: "Labor", active: true },
+        { id: "rate_labor4", name: "Emergency response crew", unit: "hour", rate: 195, category: "Labor", active: true },
+        { id: "rate_labor5", name: "Climbing specialist", unit: "hour", rate: 128, category: "Labor", active: true }
+      ],
+      equipment: [
+        { id: "rate_eq1", name: "Chipper + 2-person crew", unit: "hour", rate: 185, category: "Equipment", active: true },
+        { id: "rate_eq2", name: "Aerial lift", unit: "hour", rate: 135, category: "Equipment", active: true },
+        { id: "rate_eq3", name: "Stump grinder", unit: "hour", rate: 125, category: "Equipment", active: true },
+        { id: "rate_eq4", name: "Wood chipper trailer", unit: "load", rate: 145, category: "Equipment", active: true }
+      ],
+      disposal: [
+        { id: "rate_disp1", name: "Green waste haul-away", unit: "load", rate: 175, category: "Disposal", active: true },
+        { id: "rate_disp2", name: "Heavy debris removal", unit: "load", rate: 260, category: "Disposal", active: true },
+        { id: "rate_disp3", name: "Chipping service", unit: "load", rate: 110, category: "Disposal", active: true }
+      ],
+      travel: [
+        { id: "rate_travel1", name: "Service travel", unit: "mile", rate: 2.85, category: "Travel", active: true },
+        { id: "rate_travel2", name: "Equipment delivery", unit: "trip", rate: 95, category: "Travel", active: true }
+      ]
+    },
+    templates: [
+      {
+        id: "tpl_pruning",
+        name: "Standard Crown Pruning",
+        service: "Pruning",
+        description: "Routine crown cleaning for mature, accessible trees.",
+        version: 3,
+        updatedAt: daysAgo(4),
+        active: true,
+        baseHours: 2.5,
+        complexity: 1,
+        defaultItems: [
+          { id: "li_p1", description: "Crown pruning and cleanup", type: "labor", rateId: "rate_labor1", qty: 2.5, taxable: true },
+          { id: "li_p2", description: "Chipper and crew equipment", type: "equipment", rateId: "rate_eq1", qty: 2.5, taxable: true }
+        ],
+        exclusions: ["Hazard removal beyond deadwood identified in scope", "Pest treatment", "Root excavation or aeration"],
+        assumptions: ["Standard access with a clear 10-foot staging area", "Disposal included for up to one chipper load"]
+      },
+      {
+        id: "tpl_removal",
+        name: "Complete Tree Removal",
+        service: "Removal",
+        description: "Full removal, hauling, and site restoration.",
+        version: 5,
+        updatedAt: daysAgo(9),
+        active: true,
+        baseHours: 4,
+        complexity: 1,
+        defaultItems: [
+          { id: "li_r1", description: "Removal crew labor", type: "labor", rateId: "rate_labor3", qty: 4, taxable: true },
+          { id: "li_r2", description: "Chipper and crew equipment", type: "equipment", rateId: "rate_eq1", qty: 4, taxable: true },
+          { id: "li_r3", description: "Heavy debris removal", type: "disposal", rateId: "rate_disp2", qty: 1, taxable: true }
+        ],
+        exclusions: [" stump grinding", "Utility relocation", "Permit or municipal fees", "Replanting"],
+        assumptions: ["Removal includes all tree material below 12 inches diameter unless noted", "Site left free of large debris"]
+      },
+      {
+        id: "tpl_stump",
+        name: "Stump Grinding",
+        service: "Stump grinding",
+        description: "Mechanical stump removal and clean site finish.",
+        version: 2,
+        updatedAt: daysAgo(16),
+        active: true,
+        baseHours: 1.5,
+        complexity: 1,
+        defaultItems: [
+          { id: "li_s1", description: "Stump grinding operator", type: "labor", rateId: "rate_labor1", qty: 1.5, taxable: true },
+          { id: "li_s2", description: "Stump grinder", type: "equipment", rateId: "rate_eq3", qty: 1.5, taxable: true }
+        ],
+        exclusions: ["Root removal beyond grinder depth", "Soil remediation", "Replacement planting"],
+        assumptions: ["Stump diameter no greater than 24 inches", "No underground utilities or septic systems in work area"]
+      },
+      {
+        id: "tpl_cabling",
+        name: "Cabling & Support",
+        service: "Cabling",
+        description: "Supplemental cable installation and structural support.",
+        version: 1,
+        updatedAt: daysAgo(25),
+        active: true,
+        baseHours: 2,
+        complexity: 1,
+        defaultItems: [
+          { id: "li_c1", description: "Certified arborist labor", type: "labor", rateId: "rate_labor2", qty: 2, taxable: true },
+          { id: "li_c2", description: "Cabling materials", type: "equipment", rateId: "rate_eq1", qty: 1, taxable: true }
+        ],
+        exclusions: ["Lightning protection", "Pest management", "Structural repair of trunks or root plates"],
+        assumptions: ["Installation per ANSI A300 Part 2 standards", "Customer photos supplied with proposal"]
+      },
+      {
+        id: "tpl_emergency",
+        name: "Emergency Storm Response",
+        service: "Emergency",
+        description: "Priority stabilization and hazard clearance.",
+        version: 4,
+        updatedAt: daysAgo(2),
+        active: true,
+        baseHours: 3,
+        complexity: 1,
+        defaultItems: [
+          { id: "li_e1", description: "Emergency response crew", type: "labor", rateId: "rate_labor4", qty: 3, taxable: true },
+          { id: "li_e2", description: "Aerial lift", type: "equipment", rateId: "rate_eq2", qty: 3, taxable: true },
+          { id: "li_e3", description: "Priority green waste haul-away", type: "disposal", rateId: "rate_disp1", qty: 1, taxable: true }
+        ],
+        exclusions: ["Insurance claim processing", "Building or structure damage repair", "Long-term tree health treatment"],
+        assumptions: ["Initial stabilization only", "Final scope subject to post-storm inspection"]
+      }
+    ],
+    quotes: [
+      {
+        id: "quote_1048",
+        number: "Q2-1048",
+        customer: { name: "Hartwell Residence", contact: "Megan Hartwell", email: "megan.hartwell@example.com", phone: "(555) 018-9921", address: "826 Willow Lane, Springfield, IL 62712" },
+        service: "Pruning",
+        status: "Approved",
+        createdAt: daysAgo(12),
+        updatedAt: daysAgo(3),
+        validUntil: daysFromNow(18),
+        assignedTo: "user_sarah",
+        templateId: "tpl_pruning",
+        tree: { count: 2, height: 32, diameter: 18, condition: "Good", location: "Residential yard", access: "Standard access", debrisVolume: 1.5, disposal: "Haul away", notes: "Oak and ornamental pear near fence line." },
+        items: [
+          { id: "li_h1", description: "Crown pruning and cleanup", type: "labor", rateId: "rate_labor1", qty: 4, taxable: true },
+          { id: "li_h2", description: "Chipper and crew equipment", type: "equipment", rateId: "rate_eq1", qty: 4, taxable: true },
+          { id: "li_h3", description: "Service travel", type: "travel", rateId: "rate_travel1", qty: 18, taxable: true }
+        ],
+        exclusions: ["Hazard removal beyond deadwood identified in scope", "Pest treatment", "Root excavation or aeration"],
+        assumptions: ["Standard access with a clear 10-foot staging area", "Disposal included for one chipper load"],
+        notes: "Work window requested weekdays after 9 AM.",
+        photos: [],
+        subtotal: 0,
+        tax: 0,
+        total: 0,
+        taxRate: 6.25,
+        marginPercent: 32,
+        rateSnapshot: {},
+        approval: { approvedBy: "Alex Morgan", approvedAt: daysAgo(3), scope: "Two crown-pruned trees; all debris hauled from site." },
+        activity: [
+          { id: "act_h1", user: "Alex Morgan", action: "Approved quote", detail: "Scope and pricing approved for customer review.", at: daysAgo(3) },
+          { id: "act_h2", user: "Sarah Chen", action: "Updated quote", detail: "Added second tree and adjusted access notes.", at: daysAgo(5) },
+          { id: "act_h3", user: "Alex Morgan", action: "Created quote", detail: "Quote created from Standard Crown Pruning v3.", at: daysAgo(12) }
+        ]
+      },
+      {
+        id: "quote_1047",
+        number: "Q2-1047",
+        customer: { name: "Lakeside Dental Group", contact: "Dr. Priya Shah", email: "office@lakesidedental.example", phone: "(555) 017-4410", address: "44 North Shore Drive, Springfield, IL 62703" },
+        service: "Removal",
+        status: "Sent",
+        createdAt: daysAgo(6),
+        updatedAt: daysAgo(1),
+        validUntil: daysFromNow(24),
+        assignedTo: "user_marcus",
+        templateId: "tpl_removal",
+        tree: { count: 1, height: 47, diameter: 31, condition: "Poor", location: "Commercial property", access: "Restricted access", debrisVolume: 3.5, disposal: "Haul away", notes: "Close to parking lot and building canopy." },
+        items: [
+          { id: "li_l1", description: "Removal crew labor", type: "labor", rateId: "rate_labor3", qty: 7, taxable: true },
+          { id: "li_l2", description: "Chipper and crew equipment", type: "equipment", rateId: "rate_eq1", qty: 7, taxable: true },
+          { id: "li_l3", description: "Heavy debris removal", type: "disposal", rateId: "rate_disp2", qty: 3, taxable: true },
+          { id: "li_l4", description: "Service travel", type: "travel", rateId: "rate_travel1", qty: 24, taxable: true }
+        ],
+        exclusions: [" stump grinding", "Utility relocation", "Permit or municipal fees", "Replanting"],
+        assumptions: ["Removal includes all tree material below 12 inches diameter unless noted", "Site left free of large debris"],
+        notes: "Business access must be coordinated with facilities.",
+        photos: [],
+        subtotal: 0,
+        tax: 0,
+        total: 0,
+        taxRate: 6.25,
+        marginPercent: 32,
+        rateSnapshot: {},
+        approval: null,
+        activity: [
+          { id: "act_l1", user: "Marcus Lee", action: "Sent quote", detail: "Proposal emailed to Dr. Shah.", at: daysAgo(1) },
+          { id: "act_l2", user: "Marcus Lee", action: "Created quote", detail: "Quote created from Complete Tree Removal v5.", at: daysAgo(6) }
+        ]
+      },
+      {
+        id: "quote_1046",
+        number: "Q2-1046",
+        customer: { name: "Jonah Whitfield", contact: "Jonah Whitfield", email: "jonah.w@example.com", phone: "(555) 012-8103", address: "19 Meadowbrook Court, Springfield, IL 62711" },
+        service: "Stump grinding",
+        status: "Draft",
+        createdAt: daysAgo(2),
+        updatedAt: daysAgo(2),
+        validUntil: daysFromNow(28),
+        assignedTo: "user_sarah",
+        templateId: "tpl_stump",
+        tree: { count: 1, height: 0, diameter: 20, condition: "Not applicable", location: "Residential yard", access: "Standard access", debrisVolume: 0.25, disposal: "Leave on site", notes: "Old maple stump near driveway." },
+        items: [
+          { id: "li_j1", description: "Stump grinding operator", type: "labor", rateId: "rate_labor1", qty: 2, taxable: true },
+          { id: "li_j2", description: "Stump grinder", type: "equipment", rateId: "rate_eq3", qty: 2, taxable: true },
+          { id: "li_j3", description: "Service travel", type: "travel", rateId: "rate_travel1", qty: 12, taxable: true }
+        ],
+        exclusions: ["Root removal beyond grinder depth", "Soil remediation", "Replacement planting"],
+        assumptions: ["Stump diameter no greater than 24 inches", "No underground utilities or septic systems in work area"],
+        notes: "",
+        photos: [],
+        subtotal: 0,
+        tax: 0,
+        total: 0,
+        taxRate: 6.25,
+        marginPercent: 32,
+        rateSnapshot: {},
+        approval: null,
+        activity: [
+          { id: "act_j1", user: "Sarah Chen", action: "Created quote", detail: "Quote created from Stump Grinding v2.", at: daysAgo(2) }
+        ]
+      },
+      {
+        id: "quote_1045",
+        number: "Q2-1045",
+        customer: { name: "Evergreen Community HOA", contact: "Tina Brooks", email: "tina@evergreenhoa.example", phone: "(555) 019-2277", address: "700 Evergreen Commons, Springfield, IL 62710" },
+        service: "Cabling",
+        status: "Approved",
+        createdAt: daysAgo(18),
+        updatedAt: daysAgo(8),
+        validUntil: daysFromNow(4),
+        assignedTo: "user_marcus",
+        templateId: "tpl_cabling",
+        tree: { count: 3, height: 38, diameter: 22, condition: "Fair", location: "HOA common area", access: "Limited access", debrisVolume: 0.5, disposal: "Leave on site", notes: "Three mature oaks showing co-dominant stem movement." },
+        items: [
+          { id: "li_g1", description: "Certified arborist labor", type: "labor", rateId: "rate_labor2", qty: 7, taxable: true },
+          { id: "li_g2", description: "Cabling materials", type: "equipment", rateId: "rate_eq1", qty: 3, taxable: true },
+          { id: "li_g3", description: "Service travel", type: "travel", rateId: "rate_travel1", qty: 31, taxable: true }
+        ],
+        exclusions: ["Lightning protection", "Pest management", "Structural repair of trunks or root plates"],
+        assumptions: ["Installation per ANSI A300 Part 2 standards", "Customer photos supplied with proposal"],
+        notes: "Coordinate around playground use.",
+        photos: [],
+        subtotal: 0,
+        tax: 0,
+        total: 0,
+        taxRate: 6.25,
+        marginPercent: 32,
+        rateSnapshot: {},
+        approval: { approvedBy: "Alex Morgan", approvedAt: daysAgo(8), scope: "Three supplemental cable systems; material and labor confirmed." },
+        activity: [
+          { id: "act_g1", user: "Alex Morgan", action: "Approved quote", detail: "Approved after arborist review.", at: daysAgo(8) },
+          { id: "act_g2", user: "Marcus Lee", action: "Created quote", detail: "Quote created from Cabling & Support v1.", at: daysAgo(18) }
+        ]
+      }
+    ],
+    team: [
+      { id: "user_alex", name: "Alex Morgan", role: "Owner", initials: "AM", active: true },
+      { id: "user_sarah", name: "Sarah Chen", role: "Estimator", initials: "SC", active: true },
+      { id: "user_marcus", name: "Marcus Lee", role: "Sales", initials: "ML", active: true },
+      { id: "user_elena", name: "Elena Ruiz", role: "Office manager", initials: "ER", active: true }
+    ],
+    notifications: [
+      { id: "note1", title: "Quote Q2-1048 approved", detail: "Sarah's crown pruning proposal is ready to share.", at: daysAgo(3), read: false },
+      { id: "note2", title: "Template updated", detail: "Emergency Storm Response is now version 4.", at: daysAgo(2), read: false },
+      { id: "note3", title: "Quote nearing expiry", detail: "Q2-1045 expires in 4 days.", at: daysAgo(1), read: false }
+    ],
+    ui: {
+      currentView: "dashboard",
+      builderStep: 1,
+      editingQuoteId: null,
+      activeBuilderTab: "details",
+      quoteSearch: "",
+      quoteStatus: "All statuses",
+      quoteService: "All services",
+      templateSearch: "",
+      templateService: "All services",
+      activityFilter: "All activity",
+      teamQuoteFilter: "All quotes"
+    }
+  };
+}
+
+let state = loadState();
+let draft = null;
+let draftDirty = false;
+let modalCleanup = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      const initial = seedState();
+      saveState(initial);
+      return initial;
+    }
+    const parsed = JSON.parse(raw);
+    return migrateState(parsed);
+  } catch (error) {
+    console.error("State could not be loaded", error);
+    const initial = seedState();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(initial)); } catch (_) {}
+    return initial;
+  }
+}
+
+function migrateState(saved) {
+  const fresh = seedState();
+  const merged = {
+    ...fresh,
+    ...saved,
+    company: { ...fresh.company, ...(saved.company || {}) },
+    currentUser: { ...fresh.currentUser, ...(saved.currentUser || {}) },
+    priceBook: saved.priceBook || fresh.priceBook,
+    templates: Array.isArray(saved.templates) ? saved.templates : fresh.templates,
+    quotes: Array.isArray(saved.quotes) ? saved.quotes : fresh.quotes,
+    team: Array.isArray(saved.team) ? saved.team : fresh.team,
+    notifications: Array.isArray(saved.notifications) ? saved.notifications : fresh.notifications,
+    ui: { ...fresh.ui, ...(saved.ui || {}) }
+  };
+  merged.quotes.forEach(q => {
+    q.items = Array.isArray(q.items) ? q.items : [];
+    q.activity = Array.isArray(q.activity) ? q.activity : [];
+    q.photos = Array.isArray(q.photos) ? q.photos : [];
+    q.rateSnapshot = q.rateSnapshot || {};
+    q.approval = q.approval || null;
+    if (!q.tree) q.tree = { count: 1, height: 20, diameter: 12, condition: "Good", location: "Residential yard", access: "Standard access", debrisVolume: 1, disposal: "Haul away", notes: "" };
+  });
+  return merged;
+}
+
+function saveState(next = state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    return true;
+  } catch (error) {
+    console.error(error);
+    toast("Your changes could not be saved. Check browser storage permissions.", "error");
+    return false;
+  }
+}
+
+function recalculateQuote(quote) {
+  let subtotal = 0;
+  let taxable = 0;
+  quote.items.forEach(item => {
+    const rate = getRate(item.rateId);
+    const storedRate = Number(item.lockedRate);
+    const unitRate = Number.isFinite(storedRate) ? storedRate : (rate ? rate.rate : 0);
+    item.unitRate = unitRate;
+    item.amount = unitRate * Number(item.qty || 0);
+    subtotal += item.amount;
+    if (item.taxable !== false) taxable += item.amount;
+  });
+  const taxRate = Number(quote.taxRate ?? state.company.taxRate);
+  quote.subtotal = subtotal;
+  quote.tax = taxable * taxRate / 100;
+  quote.total = subtotal + quote.tax;
+  quote.marginPercent = Number(quote.marginPercent ?? state.company.defaultMargin);
+  quote.updatedAt = nowISO();
+  return quote;
+}
+
+function getRate(id) {
+  for (const category of Object.values(state.priceBook)) {
+    const found = category.find(r => r.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+function quoteStatusClass(status) {
+  return ({
+    Draft: "badge-gray",
+    Sent: "badge-blue",
+    "Viewed": "badge-gold",
+    Approved: "badge-green",
+    Declined: "badge-red",
+    Expired: "badge-gray"
+  })[status] || "badge-gray";
+}
+
+function serviceIcon(service) {
+  if (service === "Removal") return icons.tree;
+  if (service === "Stump grinding") return icons.bolt;
+  if (service === "Cabling") return icons.check;
+  if (service === "Emergency") return icons.alert;
+  return icons.tree;
+}
+
+function toast(message, type = "success", duration = 3600) {
+  const region = document.getElementById("toastRegion");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  const icon = type === "error" ? icons.alert : type === "info" ? icons.info : icons.check;
+  el.innerHTML = icon + "<span>" + escapeHTML(message) + "</span><button aria-label='Dismiss'>×</button>";
+  const timer = setTimeout(() => el.remove(), duration);
+  el.querySelector("button").addEventListener("click", () => {
+    clearTimeout(timer);
+    el.remove();
+  });
+  region.appendChild(el);
+}
+
+function setView(view, options = {}) {
+  if (!["dashboard", "quotes", "builder", "templates", "pricebook", "team"].includes(view)) view = "dashboard";
+  if (view !== "builder" && draftDirty && !options.skipGuard) {
+    const leave = confirm("You have unsaved quote changes. Leave the builder without saving?");
+    if (!leave) return;
+    draftDirty = false;
+  }
+  if (view !== "builder") {
+    draft = null;
+    state.ui.editingQuoteId = null;
+  }
+  state.ui.currentView = view;
+  saveState();
+  document.querySelectorAll(".view-panel").forEach(el => el.classList.add("hidden"));
+  document.getElementById("view-" + view).classList.remove("hidden");
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.toggle("active", el.dataset.view === view));
+  const titles = { dashboard: "Dashboard", quotes: "Quotes", builder: draft ? "Quote builder" : "Quote builder", templates: "Job templates", pricebook: "Price book", team: "Team & activity" };
+  document.getElementById("pageTitle").textContent = titles[view];
+  renderView(view);
+  document.body.classList.remove("sidebar-open");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderView(view) {
+  if (view === "dashboard") renderDashboard();
+  if (view === "quotes") renderQuotes();
+  if (view === "builder") renderBuilder();
+  if (view === "templates") renderTemplates();
+  if (view === "pricebook") renderPriceBook();
+  if (view === "team") renderTeam();
+  updateNavCounts();
+}
+
+function updateNavCounts() {
+  document.getElementById("quoteCountNav").textContent = state.quotes.length;
+  document.getElementById("templateCountNav").textContent = state.templates.filter(t => t.active).length;
+}
+
+function emptyState(icon, title, text, button = "") {
+  return `<div class="empty-state">
+    <div class="empty-icon">${icon}</div>
+    <h3>${escapeHTML(title)}</h3>
+    <p>${escapeHTML(text)}</p>${button}
+  </div>`;
+}
+
+function renderDashboard() {
+  const quotes = state.quotes;
+  const approved = quotes.filter(q => q.status === "Approved");
+  const sent = quotes.filter(q => q.status === "Sent" || q.status === "Viewed");
+  const pipeline = quotes.filter(q => !["Declined", "Expired"].includes(q.status)).reduce((sum, q) => sum + q.total, 0);
+  const approvedValue = approved.reduce((sum, q) => sum + q.total, 0);
+  const pending = quotes.filter(q => q.status === "Draft").length;
+  const recent = [...quotes].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 5);
+  const upcoming = [...quotes].filter(q => new Date(q.validUntil) <= new Date(daysFromNow(7))).sort((a, b) => new Date(a.validUntil) - new Date(b.validUntil)).slice(0, 4);
+  const activities = quotes.flatMap(q => q.activity.map(a => ({ ...a, quoteNumber: q.number, customer: q.customer.name }))).sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, 6);
+  const conversion = quotes.length ? Math.round(approved.length / quotes.length * 100) : 0;
+
+  document.getElementById("view-dashboard").innerHTML = `
+    <div class="page-heading">
+      <div>
+        <h1>Good ${greeting()}, Alex</h1>
+        <p>Here’s what’s happening across your quoting workflow.</p>
+      </div>
+      <div class="heading-actions">
+        <button class="btn" data-view="templates">Browse templates</button>
+        <button class="btn btn-primary" data-action="new-quote">${icons.plus} Create quote</button>
+      </div>
+    </div>
+    <div class="grid grid-4" style="margin-bottom:17px">
+      <div class="card stat-card">
+        <div class="stat-icon">${icons.dollar}</div>
+        <div><div class="stat-value">${money(pipeline)}</div><div class="stat-label">Active quote value</div><div class="stat-trend">${sent.length} proposal${sent.length === 1 ? "" : "s"} awaiting response</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon blue">${icons.check}</div>
+        <div><div class="stat-value">${money(approvedValue)}</div><div class="stat-label">Approved value</div><div class="stat-trend">${approved.length} approved quote${approved.length === 1 ? "" : "s"}</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon gold">${icons.file}</div>
+        <div><div class="stat-value">${pending}</div><div class="stat-label">Draft quotes</div><div class="stat-trend" style="color:var(--muted)">Ready for review</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon red">${icons.clock}</div>
+        <div><div class="stat-value">${conversion}%</div><div class="stat-label">Approval rate</div><div class="stat-trend">Based on ${quotes.length} total quote${quotes.length === 1 ? "" : "s"}</div></div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr)">
+      <div class="card">
+        <div class="card-header">
+          <div><h2>Recent quotes</h2><span class="muted" style="font-size:12px">Latest customer activity</span></div>
+          <button class="btn btn-sm" data-view="quotes">View all</button>
+        </div>
+        ${recent.length ? `<div class="table-wrap"><table>
+          <thead><tr><th>Customer</th><th>Service</th><th>Status</th><th>Value</th><th>Updated</th></tr></thead>
+          <tbody>${recent.map(q => `<tr data-quote-row="${q.id}" class="quote-row" tabindex="0" role="button">
+            <td><div class="table-primary">${escapeHTML(q.customer.name)}</div><div class="table-secondary">${escapeHTML(q.number)} · ${escapeHTML(q.customer.contact)}</div></td>
+            <td>${escapeHTML(q.service)}</td>
+            <td><span class="badge ${quoteStatusClass(q.status)}"><span class="dot"></span>${escapeHTML(q.status)}</span></td>
+            <td class="table-primary">${money(q.total)}</td>
+            <td class="muted">${date(q.updatedAt)}</td>
+          </tr>`).join("")}</tbody></table></div>` : emptyState(icons.file, "No quotes yet", "Create your first estimate using a job template.")}
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Requires attention</h2><span class="badge badge-gold">${upcoming.length}</span></div>
+        <div class="card-body">
+          ${upcoming.length ? upcoming.map(q => `<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:13px">${escapeHTML(q.customer.name)}</strong><span class="badge badge-gold">${daysUntil(q.validUntil)}d left</span></div>
+            <div class="muted" style="font-size:11px;margin:3px 0 6px">${escapeHTML(q.number)} · ${escapeHTML(q.service)}</div>
+            <button class="btn btn-sm" data-view-quote="${q.id}">Review quote</button>
+          </div>`).join("") : emptyState(icons.check, "Nothing urgent", "No quotes are approaching their validity date.")}
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:17px;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr)">
+      <div class="card">
+        <div class="card-header"><h2>Quick start</h2></div>
+        <div class="card-body">
+          <div class="grid grid-3">
+            <button class="btn" style="min-height:95px;flex-direction:column" data-action="new-quote">${icons.plus}<span>Build from scratch</span></button>
+            <button class="btn" style="min-height:95px;flex-direction:column" data-view="templates">${icons.file}<span>Use a template</span></button>
+            <button class="btn" style="min-height:95px;flex-direction:column" data-view="pricebook">${icons.dollar}<span>Review price book</span></button>
+          </div>
+          <div class="notice info" style="margin:16px 0 0">${icons.info}<span><strong>Tip:</strong> Saved quotes keep a snapshot of their pricing. Updating your price book never changes an existing quote.</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Recent activity</h2><button class="btn btn-sm" data-view="team">View log</button></div>
+        <div class="card-body">
+          <div class="activity">${activities.map(a => `<div class="activity-item"><span class="activity-dot"></span><strong>${escapeHTML(a.user)}</strong> <span>${escapeHTML(a.action.toLowerCase())}</span><time> · ${dateTime(a.at)}</time><p>${escapeHTML(a.quoteNumber)} · ${escapeHTML(a.customer)}</p></div>`).join("") || '<p class="muted">No recent activity.</p>'}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "morning";
+  if (hour < 18) return "afternoon";
+  return "evening";
+}
+
+function daysUntil(dateString) {
+  const diff = new Date(dateString) - new Date();
+  return Math.max(0, Math.ceil(diff / 86400000));
+}
+
+function renderQuotes() {
+  const query = normalize(state.ui.quoteSearch);
+  const status = state.ui.quoteStatus;
+  const service = state.ui.quoteService;
+  const filtered = state.quotes.filter(q => {
+    const haystack = normalize([q.number, q.customer.name, q.customer.contact, q.customer.email, q.service].join(" "));
+    return (!query || haystack.includes(query)) && (status === "All statuses" || q.status === status) && (service === "All services" || q.service === service);
+  }).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+  document.getElementById("view-quotes").innerHTML = `
+    <div class="page-heading">
+      <div><h1>Quotes</h1><p>Search, compare, approve, and share customer estimates.</p></div>
+      <div class="heading-actions"><button class="btn btn-primary" data-action="new-quote">${icons.plus} New quote</button></div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-wrap">${icons.search}<label class="sr-only" for="quoteSearch">Search quotes</label><input id="quoteSearch" class="input" placeholder="Search customer, quote number, or service" value="${escapeHTML(state.ui.quoteSearch)}"></div>
+        <label class="sr-only" for="quoteStatusFilter">Filter by status</label>
+        <select id="quoteStatusFilter" class="select" style="width:150px">
+          ${["All statuses","Draft","Sent","Viewed","Approved","Declined","Expired"].map(x => `<option ${status === x ? "selected" : ""}>${x}</option>`).join("")}
+        </select>
+        <label class="sr-only" for="quoteServiceFilter">Filter by service</label>
+        <select id="quoteServiceFilter" class="select" style="width:150px">
+          ${["All services","Pruning","Removal","Stump grinding","Cabling","Emergency"].map(x => `<option ${service === x ? "selected" : ""}>${x}</option>`).join("")}
+        </select>
+        <div class="toolbar-spacer"></div>
+        <span class="muted" style="font-size:12px">${filtered.length} of ${state.quotes.length} quotes</span>
+      </div>
+      ${filtered.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>Quote</th><th>Service</th><th>Owner</th><th>Status</th><th>Valid until</th><th>Total</th><th><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>${filtered.map(q => {
+          const owner = state.team.find(t => t.id === q.assignedTo);
+          return `<tr>
+            <td><div class="table-primary">${escapeHTML(q.customer.name)}</div><div class="table-secondary">${escapeHTML(q.number)} · ${escapeHTML(q.customer.contact)}</div></td>
+            <td>${escapeHTML(q.service)}</td>
+            <td><div class="table-primary">${escapeHTML(owner?.name || "Unassigned")}</div><div class="table-secondary">${escapeHTML(owner?.role || "")}</div></td>
+            <td><span class="badge ${quoteStatusClass(q.status)}"><span class="dot"></span>${escapeHTML(q.status)}</span></td>
+            <td>${date(q.validUntil)}${daysUntil(q.validUntil) <= 7 ? `<div class="table-secondary">${daysUntil(q.validUntil)} days left</div>` : ""}</td>
+            <td class="table-primary">${money(q.total)}</td>
+            <td><div class="row-actions">
+              <button class="btn btn-sm btn-icon" data-view-quote="${q.id}" title="Preview quote" aria-label="Preview ${escapeHTML(q.number)}">${icons.eye}</button>
+              <button class="btn btn-sm btn-icon" data-edit-quote="${q.id}" title="Edit quote" aria-label="Edit ${escapeHTML(q.number)}">${icons.edit}</button>
+              <button class="btn btn-sm btn-icon" data-duplicate-quote="${q.id}" title="Duplicate quote" aria-label="Duplicate ${escapeHTML(q.number)}">${icons.copy}</button>
+            </div></td>
+          </tr>`;
+        }).join("")}</tbody></table></div>` : emptyState(icons.search, "No matching quotes", query || status !== "All statuses" || service !== "All services" ? "Try changing your search or filters." : "Create a quote to start tracking customer proposals.", `<button class="btn btn-primary" data-action="new-quote">${icons.plus} Create a quote</button>`)}
+    </div>`;
+  const search = document.getElementById("quoteSearch");
+  search.addEventListener("input", e => {
+    state.ui.quoteSearch = e.target.value;
+    saveState();
+    const pos = e.target.selectionStart;
+    renderQuotes();
+    const next = document.getElementById("quoteSearch");
+    next.focus();
+    next.setSelectionRange(pos, pos);
+  });
+  document.getElementById("quoteStatusFilter").addEventListener("change", e => { state.ui.quoteStatus = e.target.value; saveState(); renderQuotes(); });
+  document.getElementById("quoteServiceFilter").addEventListener("change", e => { state.ui.quoteService = e.target.value; saveState(); renderQuotes(); });
+}
+
+function createBlankQuote(template = null) {
+  const quote = {
+    id: uid("quote"),
+    number: nextQuoteNumber(),
+    customer: { name: "", contact: "", email: "", phone: "", address: "" },
+    service: template?.service || "Pruning",
+    status: "Draft",
+    createdAt: nowISO(),
+    updatedAt: nowISO(),
+    validUntil: daysFromNow(30),
+    assignedTo: state.currentUser.id,
+    templateId: template?.id || "",
+    tree: { count: 1, height: 25, diameter: 14, condition: "Good", location: "Residential yard", access: "Standard access", debrisVolume: 1, disposal: "Haul away", notes: "" },
+    items: [],
+    exclusions: template ? clone(template.exclusions) : ["Work outside the described scope", "Permit and inspection fees", "Unforeseen underground conditions"],
+    assumptions: template ? clone(template.assumptions) : ["Work performed during normal business hours", "Customer provides safe access to the work area"],
+    notes: "",
+    photos: [],
+    subtotal: 0,
+    tax: 0,
+    total: 0,
+    taxRate: state.company.taxRate,
+    marginPercent: state.company.defaultMargin,
+    rateSnapshot: {},
+    approval: null,
+    activity: []
+  };
+  if (template) {
+    quote.items = template.defaultItems.map(item => ({
+      ...clone(item),
+      id: uid("li"),
+      lockedRate: getRate(item.rateId)?.rate ?? 0,
+      unitRate: getRate(item.rateId)?.rate ?? 0
+    }));
+    quote.templateVersion = template.version;
+    quote.activity.push({
+      id: uid("act"),
+      user: state.currentUser.name,
+      action: "Created quote",
+      detail: `Quote created from ${template.name} v${template.version}.`,
+      at: nowISO()
+    });
+  }
+  return quote;
+}
+
+function nextQuoteNumber() {
+  const numbers = state.quotes.map(q => {
+    const m = String(q.number).match(/(\d+)$/);
+    return m ? parseInt(m[1], 10) : 1040;
+  });
+  const next = Math.max(1048, ...numbers) + 1;
+  return `${state.company.quotePrefix}-${next}`;
+}
+
+function startNewQuote(template = null) {
+  if (draftDirty && !confirm("Discard your unsaved changes and start a new quote?")) return;
+  draft = createBlankQuote(template);
+  draftDirty = false;
+  state.ui.builderStep = 1;
+  state.ui.editingQuoteId = null;
+  state.ui.currentView = "builder";
+  saveState();
+  setView("builder", { skipGuard: true });
+}
+
+function editQuote(id) {
+  const quote = state.quotes.find(q => q.id === id);
+  if (!quote) return toast("That quote could not be found.", "error");
+  if (draftDirty && !confirm("Discard your unsaved changes and open this quote?")) return;
+  draft = clone(quote);
+  draftDirty = false;
+  state.ui.editingQuoteId = id;
+  state.ui.builderStep = 1;
+  state.ui.currentView = "builder";
+  saveState();
+  setView("builder", { skipGuard: true });
+}
+
+function duplicateQuote(id) {
+  const original = state.quotes.find(q => q.id === id);
+  if (!original) return;
+  const copy = clone(original);
+  copy.id = uid("quote");
+  copy.number = nextQuoteNumber();
+  copy.status = "Draft";
+  copy.createdAt = nowISO();
+  copy.updatedAt = nowISO();
+  copy.validUntil = daysFromNow(30);
+  copy.approval = null;
+  copy.activity = [{
+    id: uid("act"), user: state.currentUser.name, action: "Duplicated quote",
+    detail: `Duplicated from ${original.number}.`, at: nowISO()
+  }];
+  state.quotes.unshift(copy);
+  saveState();
+  toast(`${copy.number} duplicated.`);
+  renderQuotes();
+}
+
+function renderBuilder() {
+  if (!draft) draft = createBlankQuote();
+  recalculateQuote(draft);
+  const steps = ["Customer & site", "Tree details", "Scope & pricing", "Terms & share"];
+  document.getElementById("view-builder").innerHTML = `
+    <div class="page-heading no-print">
+      <div>
+        <div style="display:flex;align-items:center;gap:9px"><button class="btn btn-sm btn-icon" data-view="quotes" aria-label="Back to quotes">${icons.back}</button><div><h1>${state.ui.editingQuoteId ? "Edit " + escapeHTML(draft.number) : "New estimate"}</h1><p>Build a consistent, customer-ready tree service quote.</p></div></div>
+      </div>
+      <div class="heading-actions">
+        <span class="badge badge-gray">${escapeHTML(draft.service)}</span>
+        <button class="btn" data-action="save-builder">Save draft</button>
+        <button class="btn btn-primary" data-action="save-and-share">Save & review</button>
+      </div>
+    </div>
+    <div class="steps no-print" role="navigation" aria-label="Quote builder steps">
+      ${steps.map((s, i) => `<button class="step ${state.ui.builderStep === i + 1 ? "active" : ""} ${state.ui.builderStep > i + 1 ? "complete" : ""}" data-builder-step="${i + 1}"><span class="step-number">${state.ui.builderStep > i + 1 ? "✓" : i + 1}</span>${s}</button>`).join("")}
+    </div>
+    <div class="builder-layout">
+      <div class="builder-main">
+        ${renderBuilderStep()}
+      </div>
+      <aside class="card summary-panel no-print" aria-label="Live quote summary">
+        <div class="card-header"><h3>Live estimate</h3><span class="badge badge-green"><span class="dot"></span>Live</span></div>
+        <div class="summary-customer"><strong id="summaryCustomerName">${escapeHTML(draft.customer.name || "New customer")}</strong><span id="summaryCustomerLocation">${escapeHTML(draft.customer.address || "Address not added")}</span></div>
+        <div class="line-items">
+          ${draft.items.length ? draft.items.map(item => `<div class="summary-line"><span>${escapeHTML(item.description)}</span><span>${money(item.amount)}</span></div>`).join("") : '<div class="muted" style="padding:15px 0;text-align:center">No pricing items yet</div>'}
+        </div>
+        <div class="summary-totals">
+          <div class="total-row"><span>Subtotal</span><span>${money(draft.subtotal)}</span></div>
+          <div class="total-row"><span>Tax (${number(draft.taxRate, 2)}%)</span><span>${money(draft.tax)}</span></div>
+          <div class="total-row"><span>Target margin</span><span>${number(draft.marginPercent, 0)}%</span></div>
+          <div class="total-row grand"><span>Customer total</span><span>${money(draft.total)}</span></div>
+        </div>
+        ${draft.rateSnapshot && Object.keys(draft.rateSnapshot).length ? `<div class="price-lock">${icons.lock} Pricing snapshot preserved from saved quote. <button data-action="refresh-rates">Refresh rates</button></div>` : ""}
+      </aside>
+    </div>`;
+  bindBuilderEvents();
+}
+
+function renderBuilderStep() {
+  const step = state.ui.builderStep;
+  if (step === 1) {
+    return `
+      <div class="card form-section">
+        <div class="card-header"><div><h2>Customer & site</h2><span class="muted" style="font-size:12px">Who is the proposal for?</span></div></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field"><label for="customerName" class="required">Customer or company</label><input id="customerName" class="input" data-draft="customer.name" value="${escapeHTML(draft.customer.name)}" placeholder="e.g. Hartwell Residence"><div class="field-error" data-error-for="customerName"></div></div>
+            <div class="field"><label for="contactName" class="required">Primary contact</label><input id="contactName" class="input" data-draft="customer.contact" value="${escapeHTML(draft.customer.contact)}" placeholder="Full name"><div class="field-error" data-error-for="contactName"></div></div>
+            <div class="field"><label for="customerEmail" class="required">Email address</label><input id="customerEmail" type="email" class="input" data-draft="customer.email" value="${escapeHTML(draft.customer.email)}" placeholder="customer@example.com"><div class="field-error" data-error-for="customerEmail"></div></div>
+            <div class="field"><label for="customerPhone">Phone number</label><input id="customerPhone" type="tel" class="input" data-draft="customer.phone" value="${escapeHTML(draft.customer.phone)}" placeholder="(555) 000-0000"></div>
+            <div class="field full"><label for="customerAddress" class="required">Service address</label><input id="customerAddress" class="input" data-draft="customer.address" value="${escapeHTML(draft.customer.address)}" placeholder="Street, city, state, ZIP"><div class="field-error" data-error-for="customerAddress"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card form-section">
+        <div class="card-header"><div><h2>Quote setup</h2><span class="muted" style="font-size:12px">Service, owner, and validity</span></div></div>
+        <div class="card-body">
+          <div class="form-grid three">
+            <div class="field"><label for="draftService" class="required">Service type</label><select id="draftService" class="select" data-draft="service">${["Pruning","Removal","Stump grinding","Cabling","Emergency"].map(s => `<option ${draft.service === s ? "selected" : ""}>${s}</option>`).join("")}</select></div>
+            <div class="field"><label for="assignedTo">Assigned estimator</label><select id="assignedTo" class="select" data-draft="assignedTo">${state.team.filter(t => t.active).map(t => `<option value="${t.id}" ${draft.assignedTo === t.id ? "selected" : ""}>${escapeHTML(t.name)} — ${escapeHTML(t.role)}</option>`).join("")}</select></div>
+            <div class="field"><label for="validUntil">Valid until</label><input id="validUntil" type="date" class="input" data-draft="validUntil" value="${draft.validUntil.slice(0,10)}"></div>
+          </div>
+        </div>
+      </div>`;
+  }
+  if (step === 2) {
+    return `
+      <div class="card form-section">
+        <div class="card-header"><div><h2>Tree-specific complexity</h2><span class="muted" style="font-size:12px">Details used to validate labor and equipment</span></div></div>
+        <div class="card-body">
+          <div class="form-grid three">
+            <div class="field"><label for="treeCount">Number of trees</label><input id="treeCount" type="number" min="1" max="100" class="input" data-draft="tree.count" value="${draft.tree.count}"></div>
+            <div class="field"><label for="treeHeight">Estimated height (ft)</label><input id="treeHeight" type="number" min="0" class="input" data-draft="tree.height" value="${draft.tree.height}"></div>
+            <div class="field"><label for="treeDiameter">Trunk diameter (in)</label><input id="treeDiameter" type="number" min="0" class="input" data-draft="tree.diameter" value="${draft.tree.diameter}"></div>
+            <div class="field"><label for="treeCondition" class="required">Condition</label><select id="treeCondition" class="select" data-draft="tree.condition">${["Good","Fair","Poor","Dead","Hazardous","Not applicable"].map(x => `<option ${draft.tree.condition === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+            <div class="field"><label for="treeLocation" class="required">Location</label><select id="treeLocation" class="select" data-draft="tree.location">${["Residential yard","Commercial property","HOA common area","Vacant lot","Roadside / easement","Other"].map(x => `<option ${draft.tree.location === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+            <div class="field"><label for="treeAccess" class="required">Access constraints</label><select id="treeAccess" class="select" data-draft="tree.access">${["Standard access","Limited access","Restricted access","Crane access required","Overhead utilities"].map(x => `<option ${draft.tree.access === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+            <div class="field"><label for="debrisVolume">Estimated debris (loads)</label><input id="debrisVolume" type="number" min="0" step="0.25" class="input" data-draft="tree.debrisVolume" value="${draft.tree.debrisVolume}"></div>
+            <div class="field"><label for="disposalRequirement" class="required">Removal / disposal</label><select id="disposalRequirement" class="select" data-draft="tree.disposal">${["Haul away","Chip on site","Leave on site","Customer to dispose","Stump grind"].map(x => `<option ${draft.tree.disposal === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+            <div class="field"><label for="complexityMode">Complexity adjustment</label><select id="complexityMode" class="select" data-draft="complexityMode"><option value="1" ${Number(draft.complexityMode || 1) === 1 ? "selected" : ""}>1.0× standard</option><option value="1.25" ${Number(draft.complexityMode || 1) === 1.25 ? "selected" : ""}>1.25× moderate</option><option value="1.5" ${Number(draft.complexityMode || 1) === 1.5 ? "selected" : ""}>1.5× complex</option><option value="2" ${Number(draft.complexityMode || 1) === 2 ? "selected" : ""}>2.0× high complexity</option></select></div>
+          </div>
+          <div class="field full" style="margin-top:15px"><label for="treeNotes">Site notes</label><textarea id="treeNotes" class="textarea" data-draft="tree.notes" placeholder="Describe the trees, hazards, access points, and nearby structures.">${escapeHTML(draft.tree.notes)}</textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Complexity guidance</h3><span class="badge badge-blue">Auto-calculated</span></div>
+        <div class="card-body"><p class="muted" style="margin:0;font-size:12px">The factor combines tree size, condition, access, and debris. Review it before pricing; it does not change price-book rates. Restricted access may require an aerial lift or crane review.</p></div>
+      </div>`;
+  }
+  if (step === 3) {
+    return `
+      <div class="card form-section">
+        <div class="card-header"><div><h2>Scope & pricing</h2><span class="muted" style="font-size:12px">Price items directly from your price book</span></div><button class="btn btn-sm btn-primary" data-action="add-line-item">${icons.plus} Add item</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Description</th><th style="width:145px">Category</th><th style="width:160px">Rate item</th><th style="width:90px">Qty</th><th style="width:115px">Rate</th><th style="width:110px">Amount</th><th></th></tr></thead>
+            <tbody id="lineItemsBody">${renderLineItems()}</tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:flex-end">
+          <div style="width:290px">
+            <div class="total-row"><span>Subtotal</span><span>${money(draft.subtotal)}</span></div>
+            <div class="total-row"><span>Tax (${number(draft.taxRate,2)}%)</span><span>${money(draft.tax)}</span></div>
+            <div class="total-row grand"><span>Total</span><span>${money(draft.total)}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-2 form-section">
+        <div class="card">
+          <div class="card-header"><h3>Quote-level controls</h3></div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field"><label for="taxRate">Tax rate (%)</label><input id="taxRate" type="number" min="0" max="30" step="0.01" class="input" data-draft="taxRate" value="${draft.taxRate}"></div>
+              <div class="field"><label for="marginPercent">Target margin (%)</label><input id="marginPercent" type="number" min="0" max="90" step="1" class="input" data-draft="marginPercent" value="${draft.marginPercent}"></div>
+            </div>
+            <div class="notice info" style="margin:15px 0 0">${icons.info}<span>Labor and equipment quantities reflect the selected complexity factor. Rate edits update only new quotes unless a saved rate snapshot is refreshed.</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Scope inclusions</h3></div>
+          <div class="card-body">
+            <div class="field"><label for="scopeNotes">Included work description</label><textarea id="scopeNotes" class="textarea" data-draft="notes" placeholder="Describe the work to be performed.">${escapeHTML(draft.notes)}</textarea></div>
+          </div>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="card form-section">
+      <div class="card-header"><div><h2>Terms, exclusions & assumptions</h2><span class="muted" style="font-size:12px">Set clear customer expectations</span></div></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field"><label for="exclusionsText">Exclusions</label><textarea id="exclusionsText" class="textarea" data-list="exclusions" placeholder="One exclusion per line">${escapeHTML(draft.exclusions.join("\n"))}</textarea><div class="field-hint">Enter one item per line.</div></div>
+          <div class="field"><label for="assumptionsText">Assumptions</label><textarea id="assumptionsText" class="textarea" data-list="assumptions" placeholder="One assumption per line">${escapeHTML(draft.assumptions.join("\n"))}</textarea><div class="field-hint">Enter one item per line.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card form-section">
+      <div class="card-header"><div><h2>Deposit & customer acceptance</h2><span class="muted" style="font-size:12px">Optional digital acceptance on the web proposal</span></div></div>
+      <div class="card-body">
+        <div class="form-grid three">
+          <div class="field"><label for="depositPercent">Deposit (%)</label><input id="depositPercent" type="number" min="0" max="100" class="input" data-draft="depositPercent" value="${draft.depositPercent ?? state.company.depositPercent}"></div>
+          <div class="field"><label for="paymentTerms">Payment terms</label><select id="paymentTerms" class="select" data-draft="paymentTerms">${["Deposit due on scheduling","Balance due on completion","Net 15","Net 30"].map(x => `<option ${(draft.paymentTerms || "Deposit due on scheduling") === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+          <div class="field"><label class="checkbox" style="margin-top:24px"><input id="allowAcceptance" type="checkbox" data-draft="allowAcceptance" ${draft.allowAcceptance !== false ? "checked" : ""}><span>Enable digital customer acceptance</span></label></div>
+        </div>
+      </div>
+    </div>
+    <div class="card form-section">
+      <div class="card-header"><div><h2>Site photos</h2><span class="muted" style="font-size:12px">Stored locally in this browser</span></div></div>
+      <div class="card-body">
+        <label for="photoInput" class="btn">${icons.camera} Add photo</label><input id="photoInput" type="file" accept="image/*" class="hidden" multiple>
+        <div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:15px">
+          ${draft.photos.map((p, i) => `<div style="position:relative"><img src="${p.data}" alt="Site photo ${i+1}" style="width:100%;height:100px;object-fit:cover;border-radius:8px"><button class="btn btn-sm btn-icon" data-remove-photo="${i}" style="position:absolute;right:5px;top:5px;background:rgba(255,255,255,.9)" aria-label="Remove photo">×</button></div>`).join("")}
+        </div>
+        ${draft.photos.length ? "" : '<p class="muted" style="font-size:12px;margin:12px 0 0">No photos attached. Photos help customers understand the proposed scope.</p>'}
+      </div>
+    </div>`;
+}
+
+function renderLineItems() {
+  if (!draft.items.length) return '<tr><td colspan="7">' + emptyState(icons.file, "No line items", "Add labor, equipment, disposal, or travel from your price book.") + '</td></tr>';
+  return draft.items.map(item => {
+    const rate = getRate(item.rateId);
+    return `<tr data-line-id="${item.id}">
+      <td><input class="input" data-item="description" value="${escapeHTML(item.description)}" aria-label="Line item description"></td>
+      <td><select class="select" data-item="type" aria-label="Category">${["labor","equipment","disposal","travel"].map(t => `<option value="${t}" ${item.type === t ? "selected" : ""}>${t[0].toUpperCase()+t.slice(1)}</option>`).join("")}</select></td>
+      <td><select class="select" data-item="rateId" aria-label="Rate item">${(state.priceBook[item.type] || []).map(r => `<option value="${r.id}" ${item.rateId === r.id ? "selected" : ""}>${escapeHTML(r.name)}</option>`).join("") || '<option value="">No rates available</option>'}</select></td>
+      <td><input type="number" step="0.25" min="0" class="input" data-item="qty" value="${item.qty}" aria-label="Quantity"></td>
+      <td><input type="number" step="0.01" min="0" class="input" data-item="lockedRate" value="${Number(item.lockedRate ?? rate?.rate ?? 0)}" aria-label="Rate"></td>
+      <td class="table-primary" data-line-amount>${money(item.amount)}</td>
+      <td><button class="btn btn-sm btn-icon btn-danger" data-remove-item="${item.id}" aria-label="Remove line item">${icons.trash}</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function bindBuilderEvents() {
+  document.querySelectorAll("[data-builder-step]").forEach(btn => btn.addEventListener("click", () => {
+    state.ui.builderStep = Number(btn.dataset.builderStep);
+    saveState();
+    renderBuilder();
+  }));
+  document.querySelectorAll("[data-draft]").forEach(el => {
+    const eventName = el.tagName === "SELECT" || el.type === "checkbox" || el.type === "date" ? "change" : "input";
+    el.addEventListener(eventName, () => {
+      let value = el.type === "checkbox" ? el.checked : el.value;
+      if (["tree.count","tree.height","tree.diameter","tree.debrisVolume","taxRate","marginPercent","depositPercent","complexityMode"].includes(el.dataset.draft)) value = Number(value);
+      setDraftPath(el.dataset.draft, value);
+      draftDirty = true;
+      if (el.dataset.draft === "customer.name" || el.dataset.draft === "customer.address") {
+        const name = document.getElementById("summaryCustomerName");
+        const address = document.getElementById("summaryCustomerLocation");
+        if (name) name.textContent = draft.customer.name || "New customer";
+        if (address) address.textContent = draft.customer.address || "Address not added";
+      }
+      if (el.dataset.draft === "taxRate" || el.dataset.draft === "marginPercent" || el.dataset.draft === "complexityMode") {
+        recalculateQuote(draft);
+        refreshBuilderPricing();
+      }
+    });
+  });
+  document.querySelectorAll("[data-list]").forEach(el => el.addEventListener("input", () => {
+    draft[el.dataset.list] = el.value.split("\n").map(x => x.trim()).filter(Boolean);
+    draftDirty = true;
+  }));
+  document.querySelectorAll("[data-item]").forEach(el => {
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => {
+      const row = el.closest("[data-line-id]");
+      const item = draft.items.find(i => i.id === row.dataset.lineId);
+      if (!item) return;
+      const field = el.dataset.item;
+      if (field === "type") {
+        item.type = el.value;
+        const first = (state.priceBook[el.value] || [])[0];
+        if (first) {
+          item.rateId = first.id;
+          item.lockedRate = first.rate;
+        }
+        renderBuilder();
+      } else {
+        item[field] = ["qty","lockedRate"].includes(field) ? Number(el.value) : el.value;
+      }
+      recalculateQuote(draft);
+      draftDirty = true;
+      refreshBuilderPricing();
+    });
+  });
+  document.querySelectorAll("[data-remove-item]").forEach(btn => btn.addEventListener("click", () => {
+    draft.items = draft.items.filter(i => i.id !== btn.dataset.removeItem);
+    recalculateQuote(draft);
+    draftDirty = true;
+    renderBuilder();
+  }));
+  const photoInput = document.getElementById("photoInput");
+  if (photoInput) photoInput.addEventListener("change", handlePhotos);
+  document.querySelectorAll("[data-remove-photo]").forEach(btn => btn.addEventListener("click", () => {
+    draft.photos.splice(Number(btn.dataset.removePhoto), 1);
+    draftDirty = true;
+    renderBuilder();
+  }));
+}
+
+function setDraftPath(path, value) {
+  const parts = path.split(".");
+  let target = draft;
+  for (let i = 0; i < parts.length - 1; i++) {
+    if (target[parts[i]] === undefined) target[parts[i]] = {};
+    target = target[parts[i]];
+  }
+  target[parts[parts.length - 1]] = value;
+}
+
+function refreshBuilderPricing() {
+  document.querySelectorAll("[data-line-id]").forEach(row => {
+    const item = draft.items.find(i => i.id === row.dataset.lineId);
+    const amount = row.querySelector("[data-line-amount]");
+    if (item && amount) amount.textContent = money(item.amount);
+  });
+  const footer = document.querySelector(".card-footer .total-row")?.parentElement;
+  if (footer) {
+    footer.innerHTML = `<div class="total-row"><span>Subtotal</span><span>${money(draft.subtotal)}</span></div><div class="total-row"><span>Tax (${number(draft.taxRate,2)}%)</span><span>${money(draft.tax)}</span></div><div class="total-row grand"><span>Total</span><span>${money(draft.total)}</span></div>`;
+  }
+  const totals = document.querySelector(".summary-totals");
+  if (totals) {
+    totals.innerHTML = `<div class="total-row"><span>Subtotal</span><span>${money(draft.subtotal)}</span></div><div class="total-row"><span>Tax (${number(draft.taxRate,2)}%)</span><span>${money(draft.tax)}</span></div><div class="total-row"><span>Target margin</span><span>${number(draft.marginPercent,0)}%</span></div><div class="total-row grand"><span>Customer total</span><span>${money(draft.total)}</span></div>`;
+  }
+  const summaryLines = document.querySelector(".line-items");
+  if (summaryLines) {
+    summaryLines.innerHTML = draft.items.length ? draft.items.map(item => `<div class="summary-line"><span>${escapeHTML(item.description)}</span><span>${money(item.amount)}</span></div>`).join("") : '<div class="muted" style="padding:15px 0;text-align:center">No pricing items yet</div>';
+  }
+}
+
+function handlePhotos(e) {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  let loaded = 0;
+  files.forEach(file => {
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 4 * 1024 * 1024) {
+      toast(`${file.name} is too large. Use an image under 4 MB.`, "error");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      draft.photos.push({ name: file.name, data: reader.result });
+      loaded++;
+      if (loaded === files.length) {
+        draftDirty = true;
+        renderBuilder();
+        toast(`${loaded} photo${loaded === 1 ? "" : "s"} attached.`);
+      }
+    };
+    reader.onerror = () => toast(`Could not read ${file.name}.`, "error");
+    reader.readAsDataURL(file);
+  });
+  e.target.value = "";
+}
+
+function validateBuilder(step = state.ui.builderStep) {
+  clearValidation();
+  const errors = [];
+  if (step === 1) {
+    if (!draft.customer.name.trim()) errors.push(["customerName", "Enter a customer or company name."]);
+    if (!draft.customer.contact.trim()) errors.push(["contactName", "Enter a primary contact."]);
+    if (!draft.customer.email.trim()) errors.push(["customerEmail", "Enter an email address."]);
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.customer.email)) errors.push(["customerEmail", "Enter a valid email address."]);
+    if (!draft.customer.address.trim()) errors.push(["customerAddress", "Enter the service address."]);
+    if (!draft.validUntil || new Date(draft.validUntil) < new Date()) errors.push(["validUntil", "Validity date must be today or later."]);
+  }
+  if (step === 2) {
+    if (!draft.tree.count || draft.tree.count < 1) errors.push(["treeCount", "At least one tree is required."]);
+  }
+  if (step === 3 && !draft.items.length) {
+    toast("Add at least one pricing line item before continuing.", "error");
+    return false;
+  }
+  errors.forEach(([id, message]) => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.classList.add("invalid");
+      const error = document.querySelector(`[data-error-for="${id}"]`);
+      if (error) { error.textContent = message; error.classList.add("show"); }
+    }
+  });
+  if (errors.length) {
+    toast(errors[0][1], "error");
+    document.querySelector(".invalid")?.focus();
+    return false;
+  }
+  return true;
+}
+
+function clearValidation() {
+  document.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
+  document.querySelectorAll(".field-error").forEach(el => { el.classList.remove("show"); el.textContent = ""; });
+}
+
+function saveDraftQuote(silent = false) {
+  if (!validateBuilder(1)) return false;
+  if (!validateBuilder(3)) return false;
+  recalculateQuote(draft);
+  draft.rateSnapshot = {};
+  draft.items.forEach(item => draft.rateSnapshot[item.rateId] = Number(item.lockedRate ?? 0));
+  const existingIndex = state.quotes.findIndex(q => q.id === draft.id);
+  const action = existingIndex >= 0 ? "Updated quote" : "Created quote";
+  draft.activity = draft.activity || [];
+  const last = draft.activity[draft.activity.length - 1];
+  if (!last || last.action !== action || last.at !== draft.updatedAt) {
+    draft.activity.push({
+      id: uid("act"), user: state.currentUser.name, action,
+      detail: existingIndex >= 0 ? "Quote details and pricing updated." : "Quote saved as a draft.",
+      at: nowISO()
+    });
+  }
+  if (existingIndex >= 0) state.quotes[existingIndex] = clone(draft);
+  else state.quotes.unshift(clone(draft));
+  state.ui.editingQuoteId = draft.id;
+  draftDirty = false;
+  saveState();
+  if (!silent) toast(`${draft.number} saved.`);
+  return true;
+}
+
+function addLineItem() {
+  const type = "labor";
+  const rate = state.priceBook[type]?.[0];
+  const item = {
+    id: uid("li"),
+    description: rate?.name || "New service item",
+    type,
+    rateId: rate?.id || "",
+    qty: 1,
+    lockedRate: rate?.rate || 0,
+    taxable: true
+  };
+  draft.items.push(item);
+  recalculateQuote(draft);
+  draftDirty = true;
+  renderBuilder();
+  setTimeout(() => {
+    const rows = document.querySelectorAll("[data-line-id]");
+    const last = rows[rows.length - 1];
+    last?.querySelector('[data-item="description"]')?.focus();
+  }, 30);
+}
+
+function refreshDraftRates() {
+  if (!draft) return;
+  draft.items.forEach(item => {
+    const rate = getRate(item.rateId);
+    if (rate) {
+      item.lockedRate = rate.rate;
+      item.unitRate = rate.rate;
+    }
+  });
+  draft.rateSnapshot = {};
+  recalculateQuote(draft);
+  draftDirty = true;
+  renderBuilder();
+  toast("Draft rates refreshed from the current price book.");
+}
+
+function renderTemplates() {
+  const query = normalize(state.ui.templateSearch);
+  const service = state.ui.templateService;
+  const filtered = state.templates.filter(t => {
+    const haystack = normalize([t.name, t.description, t.service].join(" "));
+    return (!query || haystack.includes(query)) && (service === "All services" || t.service === service);
+  });
+  document.getElementById("view-templates").innerHTML = `
+    <div class="page-heading">
+      <div><h1>Job templates</h1><p>Reusable scopes and pricing for consistent, faster estimates.</p></div>
+      <div class="heading-actions"><button class="btn btn-primary" data-action="new-template">${icons.plus} New template</button></div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-wrap">${icons.search}<label class="sr-only" for="templateSearch">Search templates</label><input id="templateSearch" class="input" placeholder="Search templates" value="${escapeHTML(state.ui.templateSearch)}"></div>
+        <label class="sr-only" for="templateServiceFilter">Filter template service</label>
+        <select id="templateServiceFilter" class="select" style="width:160px">${["All services","Pruning","Removal","Stump grinding","Cabling","Emergency"].map(s => `<option ${service === s ? "selected" : ""}>${s}</option>`).join("")}</select>
+        <div class="toolbar-spacer"></div><span class="muted" style="font-size:12px">${filtered.length} template${filtered.length === 1 ? "" : "s"}</span>
+      </div>
+    </div>
+    <div class="template-grid" style="margin-top:17px">
+      ${filtered.map(t => `<div class="card template-card">
+        <div class="template-visual">${serviceIcon(t.service)}<span class="version">v${t.version}</span></div>
+        <div class="template-content">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><h3>${escapeHTML(t.name)}</h3><span class="badge ${t.active ? "badge-green" : "badge-gray"}">${t.active ? "Active" : "Archived"}</span></div>
+          <p>${escapeHTML(t.description)}</p>
+          <div class="template-meta"><span>${escapeHTML(t.service)}</span><span>${t.defaultItems.length} line items · ${number(t.baseHours)}h base</span></div>
+          <div class="template-actions">
+            <button class="btn btn-sm btn-primary" data-use-template="${t.id}">Use template</button>
+            <button class="btn btn-sm" data-edit-template="${t.id}">Edit</button>
+            <button class="btn btn-sm btn-icon" data-duplicate-template="${t.id}" title="Duplicate template" aria-label="Duplicate ${escapeHTML(t.name)}">${icons.copy}</button>
+          </div>
+          <div class="muted" style="font-size:10px;margin-top:10px">Updated ${date(t.updatedAt)}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+    ${filtered.length ? "" : `<div class="card" style="margin-top:17px">${emptyState(icons.search, "No templates found", "Try a different search or create a custom job template.")}</div>`}`;
+  const search = document.getElementById("templateSearch");
+  search.addEventListener("input", e => {
+    state.ui.templateSearch = e.target.value;
+    saveState();
+    const pos = e.target.selectionStart;
+    renderTemplates();
+    const next = document.getElementById("templateSearch");
+    next.focus();
+    next.setSelectionRange(pos, pos);
+  });
+  document.getElementById("templateServiceFilter").addEventListener("change", e => { state.ui.templateService = e.target.value; saveState(); renderTemplates(); });
+}
+
+function duplicateTemplate(id) {
+  const original = state.templates.find(t => t.id === id);
+  if (!original) return;
+  const copy = clone(original);
+  copy.id = uid("tpl");
+  copy.name = original.name + " (Copy)";
+  copy.version = 1;
+  copy.updatedAt = nowISO();
+  copy.defaultItems = copy.defaultItems.map(i => ({ ...i, id: uid("li") }));
+  state.templates.unshift(copy);
+  saveState();
+  toast("Template duplicated. You can edit the copy without changing the original.");
+  renderTemplates();
+}
+
+function renderPriceBook() {
+  const categories = Object.entries(state.priceBook);
+  document.getElementById("view-pricebook").innerHTML = `
+    <div class="page-heading">
+      <div><h1>Price book</h1><p>One source of truth for labor, equipment, disposal, travel, tax, and margin.</p></div>
+      <div class="heading-actions"><button class="btn" data-action="add-rate">${icons.plus} Add rate</button></div>
+    </div>
+    <div class="notice info">${icons.info}<span><strong>Safe pricing behavior:</strong> Changes here affect new quotes only. Existing quotes preserve the rates used when they were saved. You can refresh a quote’s rates explicitly.</span></div>
+    <div class="card">
+      <div class="card-header"><div><h2>Rate items</h2><span class="muted" style="font-size:12px">${categories.flatMap(c => c[1]).length} active rate items</span></div></div>
+      <div class="table-wrap">
+        <table class="price-book-table">
+          <thead><tr><th>Item</th><th>Unit</th><th style="width:115px">Rate</th><th>Status</th><th style="width:110px">Actions</th></tr></thead>
+          <tbody>${categories.map(([key, rates]) => `
+            <tr class="rate-category"><td colspan="5">${key === "labor" ? "Labor" : key === "equipment" ? "Equipment" : key === "disposal" ? "Disposal & removal" : "Travel"}</td></tr>
+            ${rates.map(r => `<tr data-rate-id="${r.id}">
+              <td>${escapeHTML(r.name)}</td>
+              <td class="muted">${escapeHTML(r.unit)}</td>
+              <td><input class="input edit-price" type="number" min="0" step="0.01" value="${r.rate}" data-rate-field="rate" aria-label="${escapeHTML(r.name)} rate"></td>
+              <td><span class="badge ${r.active === false ? "badge-gray" : "badge-green"}">${r.active === false ? "Inactive" : "Active"}</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-sm" data-toggle-rate="${r.id}">${r.active === false ? "Enable" : "Disable"}</button>
+                <button class="btn btn-sm btn-icon btn-danger" data-delete-rate="${r.id}" title="Delete rate" aria-label="Delete ${escapeHTML(r.name)}">${icons.trash}</button>
+              </div></td>
+            </tr>`).join("")}`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="grid grid-3" style="margin-top:17px">
+      <div class="card">
+        <div class="card-header"><h3>Company defaults</h3></div>
+        <div class="card-body">
+          <div class="field"><label for="defaultTax">Default sales tax (%)</label><input id="defaultTax" type="number" min="0" max="30" step="0.01" class="input" value="${state.company.taxRate}"></div>
+          <div class="field" style="margin-top:13px"><label for="defaultMargin">Default target margin (%)</label><input id="defaultMargin" type="number" min="0" max="90" class="input" value="${state.company.defaultMargin}"></div>
+          <button class="btn btn-primary" style="margin-top:16px" data-action="save-company-rates">Save defaults</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Rate change impact</h3></div>
+        <div class="card-body">
+          <div class="stat-value">${state.quotes.length}</div><div class="stat-label">Saved quotes retain their prior calculation</div>
+          <p class="muted" style="font-size:12px;margin:12px 0 0">Open any quote to review its pricing snapshot or refresh it against current rates.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Price governance</h3></div>
+        <div class="card-body"><p class="muted" style="font-size:12px;margin:0">All rate changes are recorded in the team activity log. Disabled rates remain visible for historical quotes but cannot be added to new estimates.</p></div>
+      </div>
+    </div>`;
+  document.querySelectorAll("[data-rate-field]").forEach(input => input.addEventListener("change", e => {
+    const row = input.closest("[data-rate-id]");
+    const rate = getRate(row.dataset.rateId);
+    if (!rate) return;
+    rate.rate = Math.max(0, Number(e.target.value) || 0);
+    rate.updatedAt = nowISO();
+    saveState();
+    logTeamActivity("Updated price book", `${rate.name} changed to ${money(rate.rate)} per ${rate.unit}.`);
+    toast(`${rate.name} updated. Existing quotes were not changed.`);
+  }));
+  document.querySelectorAll("[data-toggle-rate]").forEach(btn => btn.addEventListener("click", () => {
+    const rate = getRate(btn.dataset.toggleRate);
+    if (!rate) return;
+    rate.active = rate.active === false;
+    saveState();
+    renderPriceBook();
+    toast(`${rate.name} ${rate.active ? "enabled" : "disabled"}.`);
+  }));
+  document.querySelectorAll("[data-delete-rate]").forEach(btn => btn.addEventListener("click", () => {
+    const rate = getRate(btn.dataset.deleteRate);
+    if (!rate) return;
+    const used = state.quotes.some(q => q.items.some(i => i.rateId === rate.id));
+    if (used) {
+      toast("This rate is used by saved quotes. Disable it instead of deleting.", "error");
+      return;
+    }
+    if (!confirm(`Delete “${rate.name}”?`)) return;
+    for (const key of Object.keys(state.priceBook)) state.priceBook[key] = state.priceBook[key].filter(r => r.id !== rate.id);
+    saveState();
+    renderPriceBook();
+    toast("Rate deleted.");
+  }));
+}
+
+function logTeamActivity(action, detail, user = state.currentUser.name) {
+  const quotes = state.quotes.filter(q => ["Draft","Sent","Approved"].includes(q.status));
+  const quote = quotes[0];
+  if (quote) {
+    quote.activity.push({ id: uid("act"), user, action, detail, at: nowISO() });
+    quote.updatedAt = nowISO();
+  }
+  state.notifications.unshift({ id: uid("note"), title: action, detail, at: nowISO(), read: false });
+}
+
+function renderTeam() {
+  const quoteFilter = state.ui.teamQuoteFilter;
+  const filteredQuotes = state.quotes.filter(q => quoteFilter === "All quotes" || q.assignedTo === quoteFilter);
+  const activities = filteredQuotes.flatMap(q => q.activity.map(a => ({ ...a, quoteId: q.id, quoteNumber: q.number, customer: q.customer.name }))).sort((a, b) => new Date(b.at) - new Date(a.at));
+  document.getElementById("view-team").innerHTML = `
+    <div class="page-heading">
+      <div><h1>Team & activity</h1><p>Collaborate on estimates with a clear, accountable audit trail.</p></div>
+      <div class="heading-actions"><button class="btn" data-action="invite-member">${icons.plus} Invite member</button></div>
+    </div>
+    <div class="team-grid">
+      ${state.team.map(member => {
+        const assigned = state.quotes.filter(q => q.assignedTo === member.id);
+        const value = assigned.filter(q => q.status === "Approved").reduce((s, q) => s + q.total, 0);
+        return `<div class="card team-card">
+          <div class="team-avatar">${escapeHTML(member.initials)}</div>
+          <h3>${escapeHTML(member.name)}</h3><p>${escapeHTML(member.role)}</p>
+          <span class="badge ${member.active ? "badge-green" : "badge-gray"}">${member.active ? "Active" : "Inactive"}</span>
+          <div class="muted" style="font-size:11px;margin-bottom:13px">${assigned.length} quotes · ${money(value)} approved</div>
+          <button class="btn btn-sm" data-member-quotes="${member.id}">View quotes</button>
+        </div>`;
+      }).join("")}
+    </div>
+    <div class="card" style="margin-top:17px">
+      <div class="card-header">
+        <div><h2>Activity log</h2><span class="muted" style="font-size:12px">Every estimate change and approval is retained</span></div>
+        <select id="teamQuoteFilter" class="select" style="width:190px"><option value="All quotes">All team members</option>${state.team.map(t => `<option value="${t.id}" ${quoteFilter === t.id ? "selected" : ""}>${escapeHTML(t.name)}</option>`).join("")}</select>
+      </div>
+      <div class="card-body">
+        ${activities.length ? `<div class="activity">${activities.map(a => `<div class="activity-item"><span class="activity-dot"></span><strong>${escapeHTML(a.user)}</strong> <span>${escapeHTML(a.action.toLowerCase())}</span><time> · ${dateTime(a.at)}</time><p><button class="btn btn-ghost btn-sm" data-view-quote="${a.quoteId}" style="padding:0;height:auto">${escapeHTML(a.quoteNumber)} · ${escapeHTML(a.customer)}</button> — ${escapeHTML(a.detail)}</p></div>`).join("")}</div>` : emptyState(icons.clock, "No activity found", "Activity appears here as your team creates and changes quotes.")}
+      </div>
+    </div>
+    <div class="card" style="margin-top:17px">
+      <div class="card-header"><h2>Permission overview</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Role</th><th>Create & edit</th><th>Approve</th><th>Send & share</th><th>Manage price book</th></tr></thead><tbody>
+        <tr><td class="table-primary">Owner</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td class="table-primary">Estimator</td><td>Yes</td><td>Request</td><td>No</td><td>No</td></tr>
+        <tr><td class="table-primary">Sales</td><td>Yes</td><td>Request</td><td>Yes</td><td>No</td></tr>
+        <tr><td class="table-primary">Office manager</td><td>Yes</td><td>Request</td><td>Yes</td><td>No</td></tr>
+      </tbody></table></div>
+    </div>`;
+  document.getElementById("teamQuoteFilter").addEventListener("change", e => { state.ui.teamQuoteFilter = e.target.value; saveState(); renderTeam(); });
+}
+
+function openModal(html, size = "") {
+  closeModal();
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `<div class="modal-backdrop" role="presentation"><div class="modal ${size}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
+  const backdrop = root.querySelector(".modal-backdrop");
+  backdrop.addEventListener("mousedown", e => { if (e.target === backdrop) closeModal(); });
+  root.querySelectorAll("[data-close-modal]").forEach(btn => btn.addEventListener("click", closeModal));
+  document.body.style.overflow = "hidden";
+  setTimeout(() => root.querySelector("input,select,textarea,button")?.focus(), 20);
+  return root.querySelector(".modal");
+}
+
+function closeModal() {
+  document.getElementById("modalRoot").innerHTML = "";
+  document.body.style.overflow = "";
+  if (modalCleanup) {
+    modalCleanup();
+    modalCleanup = null;
+  }
+}
+
+function quotePaperHTML(q) {
+  const deposit = Math.round(q.total * Number(q.depositPercent ?? state.company.depositPercent) / 100);
+  return `<article class="quote-paper">
+    <div class="paper-head">
+      <div class="paper-logo"><div class="brand-mark">${icons.tree}</div><div><h2>${escapeHTML(state.company.name)}</h2><p>${escapeHTML(state.company.address)}<br>${escapeHTML(state.company.phone)} · ${escapeHTML(state.company.email)}<br>License ${escapeHTML(state.company.license)}</p></div></div>
+      <div class="quote-number"><span>ESTIMATE</span><strong>${escapeHTML(q.number)}</strong><p>${date(q.createdAt)}<br>Valid until ${date(q.validUntil)}</p></div>
+    </div>
+    <div class="paper-parties">
+      <div><h4>Prepared for</h4><p><strong>${escapeHTML(q.customer.name)}</strong><br>${escapeHTML(q.customer.contact)}<br>${escapeHTML(q.customer.address)}<br>${escapeHTML(q.customer.email)}<br>${escapeHTML(q.customer.phone)}</p></div>
+      <div><h4>Service details</h4><p><strong>${escapeHTML(q.service)}</strong><br>${q.tree.count} tree${q.tree.count === 1 ? "" : "s"} · approx. ${q.tree.height} ft tall<br>${q.tree.diameter} in diameter · ${escapeHTML(q.tree.condition)}<br>${escapeHTML(q.tree.location)}<br>${escapeHTML(q.tree.access)}</p></div>
+    </div>
+    <div class="paper-section"><h3>Proposed scope</h3><p style="font-size:13px;white-space:pre-line">${escapeHTML(q.notes || `Provide ${q.service.toLowerCase()} services as described, including labor, equipment, and material handling listed below.`)}</p></div>
+    <div class="paper-section">
+      <h3>Service & pricing</h3>
+      <div class="table-wrap"><table><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>
+        ${q.items.map(i => `<tr><td>${escapeHTML(i.description)}</td><td style="text-align:right">${number(i.qty,2)}</td><td style="text-align:right">${money(i.unitRate)}</td><td style="text-align:right">${money(i.amount)}</td></tr>`).join("")}
+      </tbody></table></div>
+      <div class="paper-totals">
+        <div class="total-row"><span>Subtotal</span><span>${money(q.subtotal)}</span></div>
+        <div class="total-row"><span>Sales tax (${number(q.taxRate,2)}%)</span><span>${money(q.tax)}</span></div>
+        <div class="total-row grand"><span>Total</span><span>${money(q.total)}</span></div>
+      </div>
+    </div>
+    ${q.tree.notes ? `<div class="paper-section"><h3>Site notes</h3><p style="font-size:13px">${escapeHTML(q.tree.notes)}</p></div>` : ""}
+    <div class="paper-section grid grid-2">
+      <div><h3>Exclusions</h3><ul style="font-size:12px;padding-left:18px;margin:0">${q.exclusions.map(x => `<li>${escapeHTML(x)}</li>`).join("")}</ul></div>
+      <div><h3>Assumptions</h3><ul style="font-size:12px;padding-left:18px;margin:0">${q.assumptions.map(x => `<li>${escapeHTML(x)}</li>`).join("")}</ul></div>
+    </div>
+    ${q.photos?.length ? `<div class="paper-section"><h3>Site photos</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${q.photos.map(p => `<img src="${p.data}" alt="${escapeHTML(p.name)}" style="width:100%;height:110px;object-fit:cover;border-radius:5px">`).join("")}</div></div>` : ""}
+    <div class="acceptance-box">
+      <h3>Acceptance & payment</h3>
+      <p>A deposit of <strong>${money(deposit)} (${number(q.depositPercent ?? state.company.depositPercent,0)}%)</strong> is due ${escapeHTML(q.paymentTerms || "when work is scheduled")}. The remaining balance is due upon completion.</p>
+      <p>This estimate is valid through ${date(q.validUntil)}. Final pricing is based on the scope and site conditions described above. Changes to scope may require a revised estimate.</p>
+      ${q.allowAcceptance !== false ? `<p style="margin-top:13px"><strong>Digital acceptance:</strong> Customer may approve this estimate online by entering their name and email and selecting “Accept estimate.”</p>` : ""}
+      <div class="signature-line">Customer signature / date</div>
+    </div>
+  </article>`;
+}
+
+function previewQuote(id) {
+  const q = state.quotes.find(x => x.id === id);
+  if (!q) return;
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">${escapeHTML(q.number)} · ${escapeHTML(q.customer.name)}</h2><p>Customer-facing web proposal</p></div><button class="close-button" data-close-modal aria-label="Close">${icons.x}</button></div>
+    <div class="modal-body" style="background:var(--surface-3)">${quotePaperHTML(q)}</div>
+    <div class="modal-footer no-print"><button class="btn" data-close-modal>Close</button><button class="btn" data-action="duplicate-from-preview" data-id="${q.id}">${icons.copy} Duplicate</button><button class="btn" data-action="compare-quote" data-id="${q.id}">Compare scope</button><button class="btn btn-primary" data-action="send-quote" data-id="${q.id}">${icons.send} Share quote</button><button class="btn" data-action="print-quote" data-id="${q.id}">${icons.print} Print / PDF</button></div>
+  `, "large");
+  modal.querySelector('[data-action="print-quote"]').addEventListener("click", () => {
+    const win = window.open("", "_blank", "width=900,height=1000");
+    if (!win) { toast("Allow pop-ups to print or save this quote as PDF.", "error"); return; }
+    win.document.write(`<!DOCTYPE html><html><head><title>${escapeHTML(q.number)} - ${escapeHTML(q.customer.name)}</title><style>body{font-family:Arial,sans-serif;color:#18251e;margin:0}.paper{max-width:800px;margin:0 auto;padding:35px}.paper-head{display:flex;justify-content:space-between;border-bottom:3px solid #176b45;padding-bottom:18px}.paper-logo h2{font-size:20px;margin:0}.paper-logo p{font-size:11px;color:#66756c}.quote-number{text-align:right;font-size:12px}.quote-number strong{font-size:19px}.paper-parties{display:grid;grid-template-columns:1fr 1fr;gap:25px;padding:20px 0}.paper-parties h4{font-size:10px;text-transform:uppercase;color:#66756c}.paper-parties p{font-size:12px}.paper-section{margin-top:22px}.paper-section h3{font-size:12px;text-transform:uppercase;border-bottom:1px solid #dce4df;padding-bottom:5px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px;border-bottom:1px solid #e4eae6;font-size:11px}th{background:#f5f8f6}.paper-totals{margin-left:auto;width:300px}.total-row{display:flex;justify-content:space-between;padding:4px;font-size:12px}.grand{font-size:16px;font-weight:bold;border-top:1px solid #aaa;margin-top:5px;padding-top:8px}.acceptance-box{border:1px solid #ccc;padding:15px;margin-top:25px;font-size:11px}.signature-line{border-top:1px solid #222;width:200px;margin-top:30px;padding-top:4px;color:#666}img{width:100%;height:110px;object-fit:cover}.brand-mark{display:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media print{.paper{padding:0;max-width:none}}</style></head><body><div class="paper">${quotePaperHTML(q)}</div><script>window.onload=function(){window.print();}<\/script></body></html>`);
+    win.document.close();
+  });
+  modal.querySelector('[data-action="duplicate-from-preview"]').addEventListener("click", () => { closeModal(); duplicateQuote(q.id); });
+  modal.querySelector('[data-action="compare-quote"]').addEventListener("click", () => { closeModal(); compareQuote(q.id); });
+  modal.querySelector('[data-action="send-quote"]').addEventListener("click", () => { closeModal(); sendQuote(q.id); });
+}
+
+function sendQuote(id) {
+  const q = state.quotes.find(x => x.id === id);
+  if (!q) return;
+  if (!q.customer.email) { toast("Add a customer email before sharing this quote.", "error"); return; }
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Share ${escapeHTML(q.number)}</h2><p>Send a professional proposal to ${escapeHTML(q.customer.name)}</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body">
+      <div class="notice info">${icons.info}<span>This demo sends the proposal in-app. The quote status and activity log update immediately.</span></div>
+      <div class="form-grid">
+        <div class="field full"><label for="sendTo">Recipient email</label><input id="sendTo" class="input" type="email" value="${escapeHTML(q.customer.email)}"></div>
+        <div class="field full"><label for="sendSubject">Email subject</label><input id="sendSubject" class="input" value="Your tree service estimate from ${escapeHTML(state.company.name)}"></div>
+        <div class="field full"><label for="sendMessage">Message</label><textarea id="sendMessage" class="textarea">Hi ${escapeHTML(q.customer.contact || q.customer.name)},\n\nThank you for the opportunity to provide a tree service estimate. Please review the attached estimate and reply with any questions.\n\nBest,\n${escapeHTML(state.company.name)}</textarea></div>
+      </div>
+      <label class="checkbox" style="margin-top:14px"><input id="includePortal" type="checkbox" checked><span>Include secure web quote and digital acceptance link</span></label>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Cancel</button><button class="btn btn-primary" data-action="confirm-send" data-id="${q.id}">${icons.send} Send proposal</button></div>
+  `, "small");
+  modal.querySelector('[data-action="confirm-send"]').addEventListener("click", () => {
+    const email = modal.querySelector("#sendTo").value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("Enter a valid recipient email.", "error"); return; }
+    q.customer.email = email;
+    q.status = "Sent";
+    q.updatedAt = nowISO();
+    q.activity.push({ id: uid("act"), user: state.currentUser.name, action: "Sent quote", detail: `Proposal sent to ${email}.`, at: nowISO() });
+    saveState();
+    closeModal();
+    toast(`Proposal sent to ${email}.`);
+    renderView(state.ui.currentView);
+  });
+}
+
+function compareQuote(id) {
+  const q = state.quotes.find(x => x.id === id);
+  if (!q) return;
+  const template = state.templates.find(t => t.id === q.templateId);
+  const estimated = q.notes || `${q.service} service for ${q.tree.count} tree${q.tree.count === 1 ? "" : "s"}.`;
+  const approved = q.approval?.scope || (q.status === "Approved" ? "Approved service scope as described in the estimate." : "No approved scope recorded yet.");
+  const differences = [];
+  if (q.status !== "Approved") differences.push("Scope has not been approved by an owner or manager.");
+  if (q.tree.condition !== "Good") differences.push(`Tree condition is ${q.tree.condition.toLowerCase()}, which may affect the final scope.`);
+  if (q.tree.access !== "Standard access") differences.push(`Site access is “${q.tree.access}”; confirm the equipment plan remains valid.`);
+  if (q.tree.debrisVolume > 2) differences.push("Debris volume may require an additional disposal load.");
+  if (q.tree.disposal === "Stump grind") differences.push("Stump grinding is specified in tree details but not included in pricing exclusions.");
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Compare estimated vs. approved scope</h2><p>${escapeHTML(q.number)} · ${escapeHTML(q.customer.name)}</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body">
+      <div class="compare-grid">
+        <div class="card"><div class="card-header"><h3>Estimated scope</h3><span class="badge badge-blue">${escapeHTML(q.status)}</span></div><div class="card-body"><p style="font-size:13px">${escapeHTML(estimated)}</p><ul class="compare-list">${q.assumptions.map(x => `<li><strong>${escapeHTML(x)}</strong></li>`).join("")}</ul></div></div>
+        <div class="card"><div class="card-header"><h3>Approved scope</h3><span class="badge ${q.status === "Approved" ? "badge-green" : "badge-gray"}">${q.status === "Approved" ? "Approved" : "Pending"}</span></div><div class="card-body"><p style="font-size:13px">${escapeHTML(approved)}</p>${q.approval ? `<div class="muted" style="font-size:11px">Approved by ${escapeHTML(q.approval.approvedBy)} on ${date(q.approval.approvedAt)}</div>` : '<p class="muted" style="font-size:12px">Approval will record the final agreed scope here.</p>'}</div></div>
+      </div>
+      <div class="card" style="margin-top:17px"><div class="card-header"><h3>Scope review notes</h3><span class="badge badge-gold">${differences.length}</span></div><div class="card-body">${differences.length ? `<ul style="font-size:12px;padding-left:18px">${differences.map(d => `<li style="margin-bottom:6px">${escapeHTML(d)}</li>`).join("")}</ul>` : '<p class="muted" style="font-size:12px;margin:0">No material scope differences found.</p>'}</div></div>
+      ${template ? `<div class="notice info" style="margin-top:17px">${icons.info}<span>Based on ${escapeHTML(template.name)} v${template.version}. Template changes do not modify this quote.</span></div>` : ""}
+    </div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Close</button>${q.status !== "Approved" ? `<button class="btn btn-primary" data-action="approve-quote" data-id="${q.id}">${icons.check} Approve scope</button>` : ""}</div>
+  `, "large");
+  const approveBtn = modal.querySelector('[data-action="approve-quote"]');
+  if (approveBtn) approveBtn.addEventListener("click", () => approveQuote(q.id, approved));
+}
+
+function approveQuote(id, scope = "") {
+  const q = state.quotes.find(x => x.id === id);
+  if (!q) return;
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Approve ${escapeHTML(q.number)}</h2><p>Confirm pricing and the final agreed scope</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label for="approvalScope" class="required">Approved scope</label><textarea id="approvalScope" class="textarea" style="min-height:120px">${escapeHTML(scope || q.notes)}</textarea></div>
+      <div class="notice warning" style="margin:15px 0 0">${icons.alert}<span>Approval records this scope and marks the quote as approved. It can still be revised by an owner.</span></div>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Cancel</button><button class="btn btn-primary" data-action="confirm-approval" data-id="${q.id}">Confirm approval</button></div>
+  `, "small");
+  modal.querySelector('[data-action="confirm-approval"]').addEventListener("click", () => {
+    const value = modal.querySelector("#approvalScope").value.trim();
+    if (!value) { toast("Describe the approved scope before approving.", "error"); return; }
+    q.status = "Approved";
+    q.approval = { approvedBy: state.currentUser.name, approvedAt: nowISO(), scope: value };
+    q.updatedAt = nowISO();
+    q.activity.push({ id: uid("act"), user: state.currentUser.name, action: "Approved quote", detail: "Scope and pricing approved.", at: nowISO() });
+    saveState();
+    closeModal();
+    toast(`${q.number} approved.`);
+    renderView(state.ui.currentView);
+  });
+}
+
+function openTemplateEditor(id = null) {
+  const template = id ? state.templates.find(t => t.id === id) : null;
+  const item = template || {
+    name: "", service: "Pruning", description: "", baseHours: 2, active: true,
+    defaultItems: [{ id: uid("li"), description: "General arborist labor", type: "labor", rateId: state.priceBook.labor[0]?.id, qty: 2, taxable: true }],
+    exclusions: [], assumptions: []
+  };
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">${template ? "Edit template" : "Create template"}</h2><p>${template ? `Version ${template.version}` : "Build a reusable job scope"}</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label for="templateName" class="required">Template name</label><input id="templateName" class="input" value="${escapeHTML(item.name)}" placeholder="e.g. Large tree removal"></div>
+        <div class="field"><label for="templateService">Service type</label><select id="templateService" class="select">${["Pruning","Removal","Stump grinding","Cabling","Emergency"].map(s => `<option ${item.service === s ? "selected" : ""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label for="templateHours">Base labor hours</label><input id="templateHours" type="number" min="0" step="0.25" class="input" value="${item.baseHours}"></div>
+        <div class="field full"><label for="templateDescription">Description</label><textarea id="templateDescription" class="textarea">${escapeHTML(item.description)}</textarea></div>
+      </div>
+      <h3 style="margin-top:22px">Default pricing</h3>
+      <div id="templateItems"></div>
+      <button class="btn btn-sm" style="margin-top:9px" data-action="add-template-item">${icons.plus} Add pricing item</button>
+      <div class="form-grid" style="margin-top:20px">
+        <div class="field"><label for="templateExclusions">Exclusions</label><textarea id="templateExclusions" class="textarea">${escapeHTML(item.exclusions.join("\n"))}</textarea></div>
+        <div class="field"><label for="templateAssumptions">Assumptions</label><textarea id="templateAssumptions" class="textarea">${escapeHTML(item.assumptions.join("\n"))}</textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Cancel</button><button class="btn btn-primary" data-action="save-template" data-id="${id || ""}">${template ? "Save new version" : "Create template"}</button></div>
+  `, "large");
+  let workingItems = clone(item.defaultItems);
+  function renderTemplateItems() {
+    const container = modal.querySelector("#templateItems");
+    container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Description</th><th>Category</th><th>Rate item</th><th>Qty</th><th></th></tr></thead><tbody>${workingItems.map((x, i) => `<tr><td><input class="input" data-ti="description" data-index="${i}" value="${escapeHTML(x.description)}" aria-label="Description"></td><td><select class="select" data-ti="type" data-index="${i}">${["labor","equipment","disposal","travel"].map(t => `<option value="${t}" ${x.type === t ? "selected" : ""}>${t[0].toUpperCase()+t.slice(1)}</option>`).join("")}</select></td><td><select class="select" data-ti="rateId" data-index="${i}">${(state.priceBook[x.type] || []).map(r => `<option value="${r.id}" ${x.rateId === r.id ? "selected" : ""}>${escapeHTML(r.name)}</option>`).join("")}</select></td><td><input type="number" min="0" step="0.25" class="input" data-ti="qty" data-index="${i}" value="${x.qty}" aria-label="Quantity"></td><td><button class="btn btn-sm btn-icon btn-danger" data-remove-ti="${i}">${icons.trash}</button></td></tr>`).join("")}</tbody></table></div>`;
+    container.querySelectorAll("[data-ti]").forEach(el => el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => {
+      const x = workingItems[Number(el.dataset.index)];
+      const field = el.dataset.ti;
+      if (field === "type") {
+        x.type = el.value;
+        const first = state.priceBook[x.type]?.[0];
+        if (first) x.rateId = first.id;
+        renderTemplateItems();
+      } else x[field] = field === "qty" ? Number(el.value) : el.value;
+    }));
+    container.querySelectorAll("[data-remove-ti]").forEach(btn => btn.addEventListener("click", () => { workingItems.splice(Number(btn.dataset.removeTi), 1); renderTemplateItems(); }));
+  }
+  renderTemplateItems();
+  modal.querySelector('[data-action="add-template-item"]').addEventListener("click", () => {
+    workingItems.push({ id: uid("li"), description: "General arborist labor", type: "labor", rateId: state.priceBook.labor[0]?.id, qty: 1, taxable: true });
+    renderTemplateItems();
+  });
+  modal.querySelector('[data-action="save-template"]').addEventListener("click", () => {
+    const name = modal.querySelector("#templateName").value.trim();
+    if (!name) { toast("Enter a template name.", "error"); return; }
+    const data = {
+      name,
+      service: modal.querySelector("#templateService").value,
+      description: modal.querySelector("#templateDescription").value.trim(),
+      baseHours: Number(modal.querySelector("#templateHours").value) || 0,
+      defaultItems: workingItems,
+      exclusions: modal.querySelector("#templateExclusions").value.split("\n").map(x => x.trim()).filter(Boolean),
+      assumptions: modal.querySelector("#templateAssumptions").value.split("\n").map(x => x.trim()).filter(Boolean)
+    };
+    if (template) {
+      const index = state.templates.findIndex(t => t.id === template.id);
+      data.id = template.id;
+      data.version = template.version + 1;
+      data.updatedAt = nowISO();
+      data.active = template.active;
+      state.templates[index] = data;
+      toast(`${name} saved as version ${data.version}. Existing quotes were not changed.`);
+    } else {
+      data.id = uid("tpl");
+      data.version = 1;
+      data.updatedAt = nowISO();
+      data.active = true;
+      state.templates.unshift(data);
+      toast(`${name} template created.`);
+    }
+    saveState();
+    closeModal();
+    renderTemplates();
+  });
+}
+
+function openRateEditor() {
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Add price book rate</h2><p>Create a reusable pricing item</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="field full"><label for="rateName" class="required">Item name</label><input id="rateName" class="input" placeholder="e.g. Bucket truck"></div>
+      <div class="field"><label for="rateCategory" class="required">Category</label><select id="rateCategory" class="select"><option value="labor">Labor</option><option value="equipment">Equipment</option><option value="disposal">Disposal</option><option value="travel">Travel</option></select></div>
+      <div class="field"><label for="rateUnit" class="required">Unit</label><input id="rateUnit" class="input" value="hour" placeholder="hour, load, mile, trip"></div>
+      <div class="field"><label for="rateAmount" class="required">Rate</label><input id="rateAmount" type="number" min="0" step="0.01" class="input" value="0"></div>
+    </div></div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Cancel</button><button class="btn btn-primary" data-action="save-rate">Add rate</button></div>
+  `, "small");
+  modal.querySelector('[data-action="save-rate"]').addEventListener("click", () => {
+    const name = modal.querySelector("#rateName").value.trim();
+    const unit = modal.querySelector("#rateUnit").value.trim();
+    const amount = Number(modal.querySelector("#rateAmount").value);
+    if (!name || !unit || amount < 0) { toast("Complete the name, unit, and a valid rate.", "error"); return; }
+    const category = modal.querySelector("#rateCategory").value;
+    state.priceBook[category].push({ id: uid("rate"), name, unit, rate: amount, category, active: true });
+    saveState();
+    closeModal();
+    renderPriceBook();
+    toast(`${name} added to the price book.`);
+  });
+}
+
+function openInviteModal() {
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Invite a team member</h2><p>Add a collaborator to your quote workspace</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="field full"><label for="memberName" class="required">Full name</label><input id="memberName" class="input"></div>
+      <div class="field"><label for="memberEmail" class="required">Email</label><input id="memberEmail" type="email" class="input"></div>
+      <div class="field"><label for="memberRole">Role</label><select id="memberRole" class="select"><option>Estimator</option><option>Sales</option><option>Office manager</option></select></div>
+    </div></div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Cancel</button><button class="btn btn-primary" data-action="confirm-invite">Send invitation</button></div>
+  `, "small");
+  modal.querySelector('[data-action="confirm-invite"]').addEventListener("click", () => {
+    const name = modal.querySelector("#memberName").value.trim();
+    const email = modal.querySelector("#memberEmail").value.trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("Enter a name and valid email address.", "error"); return; }
+    const parts = name.split(/\s+/);
+    const initials = parts.slice(0,2).map(p => p[0].toUpperCase()).join("");
+    state.team.push({ id: uid("user"), name, email, role: modal.querySelector("#memberRole").value, initials, active: true });
+    state.notifications.unshift({ id: uid("note"), title: "Team invitation sent", detail: `${name} was invited as ${modal.querySelector("#memberRole").value}.`, at: nowISO(), read: false });
+    saveState();
+    closeModal();
+    toast(`Invitation sent to ${email}.`);
+    renderTeam();
+  });
+}
+
+function showNotifications() {
+  const modal = openModal(`
+    <div class="modal-header"><div><h2 id="modalTitle">Notifications</h2><p>Updates from your quoting workspace</p></div><button class="close-button" data-close-modal>${icons.x}</button></div>
+    <div class="modal-body">
+      ${state.notifications.length ? state.notifications.map(n => `<div style="padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:11px"><div class="stat-icon ${n.read ? "" : "gold"}" style="width:34px;height:34px">${n.read ? icons.check : icons.alert}</div><div><strong style="font-size:13px">${escapeHTML(n.title)}</strong><div class="muted" style="font-size:12px;margin:3px 0">${escapeHTML(n.detail)}</div><time class="muted" style="font-size:10px">${dateTime(n.at)}</time></div></div>`).join("") : emptyState(icons.check, "You’re all caught up", "There are no new notifications.")}
+    </div>
+    <div class="modal-footer"><button class="btn" data-close-modal>Close</button><button class="btn btn-primary" data-action="mark-read">Mark all as read</button></div>
+  `, "small");
+  modal.querySelector('[data-action="mark-read"]').addEventListener("click", () => {
+    state.notifications.forEach(n => n.read = true);
+    saveState();
+    closeModal();
+    toast("Notifications marked as read.");
+  });
+}
+
+document.addEventListener("click", event => {
+  const viewBtn = event.target.closest("[data-view]");
+  if (viewBtn) {
+    setView(viewBtn.dataset.view);
+    return;
+  }
+  const quoteRow = event.target.closest("[data-quote-row]");
+  if (quoteRow) {
+    previewQuote(quoteRow.dataset.quoteRow);
+    return;
+  }
+  const previewBtn = event.target.closest("[data-view-quote]");
+  if (previewBtn) {
+    previewQuote(previewBtn.dataset.viewQuote);
+    return;
+  }
+  const editBtn = event.target.closest("[data-edit-quote]");
+  if (editBtn) {
+    editQuote(editBtn.dataset.editQuote);
+    return;
+  }
+  const duplicateBtn = event.target.closest("[data-duplicate-quote]");
+  if (duplicateBtn) {
+    duplicateQuote(duplicateBtn.dataset.duplicateQuote);
+    return;
+  }
+  const useTemplate = event.target.closest("[data-use-template]");
+  if (useTemplate) {
+    const template = state.templates.find(t => t.id === useTemplate.dataset.useTemplate);
+    if (template) startNewQuote(template);
+    return;
+  }
+  const editTemplate = event.target.closest("[data-edit-template]");
+  if (editTemplate) {
+    openTemplateEditor(editTemplate.dataset.editTemplate);
+    return;
+  }
+  const duplicateTpl = event.target.closest("[data-duplicate-template]");
+  if (duplicateTpl) {
+    duplicateTemplate(duplicateTpl.dataset.duplicateTemplate);
+    return;
+  }
+  const memberQuotes = event.target.closest("[data-member-quotes]");
+  if (memberQuotes) {
+    state.ui.teamQuoteFilter = memberQuotes.dataset.memberQuotes;
+    state.ui.quoteService = "All services";
+    state.ui.quoteStatus = "All statuses";
+    state.ui.quoteSearch = "";
+    saveState();
+    setView("quotes");
+    return;
+  }
+  const actionBtn = event.target.closest("[data-action]");
+  if (!actionBtn) return;
+  const action = actionBtn.dataset.action;
+  if (action === "new-quote") startNewQuote();
+  if (action === "new-template") openTemplateEditor();
+  if (action === "add-rate") openRateEditor();
+  if (action === "invite-member") openInviteModal();
+  if (action === "add-line-item") addLineItem();
+  if (action === "refresh-rates") refreshDraftRates();
+  if (action === "save-builder") {
+    if (saveDraftQuote()) {
+      const id = draft.id;
+      setView("quotes", { skipGuard: true });
+    }
+  }
+  if (action === "save-and-share") {
+    if (saveDraftQuote()) {
+      const id = draft.id;
+      setView("quotes", { skipGuard: true });
+      previewQuote(id);
+    }
+  }
+  if (action === "save-company-rates") {
+    const tax = Number(document.getElementById("defaultTax").value);
+    const margin = Number(document.getElementById("defaultMargin").value);
+    if (tax < 0 || tax > 30 || margin < 0 || margin > 90) { toast("Enter valid tax and margin percentages.", "error"); return; }
+    state.company.taxRate = tax;
+    state.company.defaultMargin = margin;
+    saveState();
+    toast("Company pricing defaults updated.");
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && document.getElementById("modalRoot").innerHTML) closeModal();
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s" && state.ui.currentView === "builder") {
+    event.preventDefault();
+    saveDraftQuote();
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && state.ui.currentView === "quotes") {
+    event.preventDefault();
+    document.getElementById("quoteSearch")?.focus();
+  }
+});
+
+document.getElementById("menuToggle").addEventListener("click", () => document.body.classList.toggle("sidebar-open"));
+document.getElementById("mobileOverlay").addEventListener("click", () => document.body.classList.remove("sidebar-open"));
+document.getElementById("notificationButton").addEventListener("click", showNotifications);
+
+document.querySelectorAll(".nav-item").forEach(btn => btn.addEventListener("click", () => {
+  if (btn.dataset.view !== "builder") setView(btn.dataset.view);
+}));
+
+window.addEventListener("beforeunload", event => {
+  if (draftDirty) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
+});
+
+state.quotes.forEach(recalculateQuote);
+saveState();
+renderView(state.ui.currentView || "dashboard");
+</script>
+</body>
+</html>
